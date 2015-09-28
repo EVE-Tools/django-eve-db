@@ -265,8 +265,8 @@ class MapJump(caching.base.CachingMixin, models.Model):
     CCP Table: mapJumps
     CCP Primary key: "stargateID" int(11)
     """
-    origin_gate = models.ForeignKey('MapDenormalize',
-                                    unique=True, primary_key=True,
+    origin_gate = models.OneToOneField('MapDenormalize',
+                                    primary_key=True,
                                     related_name='stargate_jump_origin_set')
     destination_gate = models.ForeignKey('MapDenormalize',
                                          related_name='stargate_jump_destination_set')
@@ -290,7 +290,7 @@ class MapCelestialStatistic(caching.base.CachingMixin, models.Model):
     CCP Table: mapCelestialStatistics
     CCP Primary key: "celestialID" int(11)
     """
-    celestial = models.ForeignKey('MapDenormalize', unique=True, primary_key=True)
+    celestial = models.OneToOneField('MapDenormalize', primary_key=True)
     temperature = models.FloatField(blank=True, null=True)
     spectral_class = models.CharField(max_length=255, blank=True)
     luminosity = models.FloatField(blank=True, null=True)
@@ -415,7 +415,7 @@ class MapLocationWormholeClass(caching.base.CachingMixin, models.Model):
     CCP Table: MapLocationWormholeClasses
     CCP Primary key: "locationID" smallint(6)
     """
-    location = models.ForeignKey('MapDenormalize', unique=True, primary_key=True)
+    location = models.OneToOneField('MapDenormalize', primary_key=True)
     wormhole_class = models.IntegerField(blank=True, null=True)
 
     objects = caching.base.CachingManager()

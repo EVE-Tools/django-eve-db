@@ -5,7 +5,7 @@ from django.contrib import admin
 from eve_db.models import *
 
 class InvCategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'description', 'is_published')
+    list_display = ('id', 'name', 'is_published')
 admin.site.register(InvCategory, InvCategoryAdmin)
 
 class ChrBloodlineAdmin(admin.ModelAdmin):
@@ -34,11 +34,11 @@ class InvMetaTypeAdmin(admin.ModelAdmin):
 admin.site.register(InvMetaType, InvMetaTypeAdmin)
 
 class InvGroupAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'category', 'description')
+    list_display = ('id', 'name', 'category')
 admin.site.register(InvGroup, InvGroupAdmin)
 
 class InvTypeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'group', 'market_group', 'description')
+    list_display = ('id', 'name', 'market_group', 'description')
 admin.site.register(InvType, InvTypeAdmin)
 
 class InvFlagAdmin(admin.ModelAdmin):
