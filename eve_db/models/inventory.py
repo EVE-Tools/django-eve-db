@@ -77,7 +77,6 @@ class InvCategory(models.Model):
     """
     id = models.IntegerField(unique=True, primary_key=True)
     name = models.CharField(max_length=50)
-    description = models.CharField(max_length=255)
     is_published = models.BooleanField(default=True)
     icon_id = models.IntegerField(blank=True, null=True)
 
@@ -105,11 +104,8 @@ class InvGroup(models.Model):
     id = models.IntegerField(unique=True, primary_key=True)
     category = models.ForeignKey(InvCategory, blank=True, null=True)
     name = models.CharField(max_length=150)
-    description = models.TextField()
     icon_id = models.IntegerField(blank=True, null=True)
     use_base_price = models.BooleanField(default=False)
-    allow_manufacture = models.BooleanField(default=True)
-    allow_recycle = models.BooleanField(default=True)
     allow_anchoring = models.BooleanField(default=False)
     is_anchored = models.BooleanField(default=False)
     is_fittable_non_singleton = models.BooleanField(default=False)
@@ -164,7 +160,6 @@ class InvType(models.Model):
     id = models.IntegerField(unique=True, primary_key=True)
     name = models.CharField(max_length=100, blank=True)
     description = models.TextField(blank=True)
-    group = models.ForeignKey(InvGroup, blank=True, null=True)
     market_group = models.ForeignKey(InvMarketGroup, blank=True, null=True)
     mass = models.FloatField(blank=True, null=True)
     volume = models.FloatField(blank=True, null=True)
@@ -173,7 +168,6 @@ class InvType(models.Model):
     race = models.ForeignKey('ChrRace', blank=True, null=True)
     base_price = models.FloatField(blank=True, null=True)
     is_published = models.BooleanField(default=False)
-    chance_of_duplicating = models.FloatField(blank=True, null=True)
 
     class Meta:
         app_label = 'eve_db'
@@ -227,8 +221,8 @@ class InvMetaType(models.Model):
     CCP Table: invMetaTypes
     CCP Primary key: "typeID" smallint(6)
     """
-    type = models.ForeignKey(InvType,
-                            unique=True, primary_key=True,
+    type = models.OneToOneField(InvType,
+                            primary_key=True,
                             related_name='inventorymetatype_type_set')
     parent_type = models.ForeignKey(InvType,
                             related_name='inventorymetatype_parent_type_set')

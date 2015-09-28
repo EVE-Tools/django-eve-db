@@ -35,12 +35,19 @@ def insert_many(objects, using="default"):
     import django.db.models
     from django.db import connections
     con = connections[using]
-    
+
     model = objects[0].__class__
     fields = [f for f in model._meta.fields if not isinstance(f, django.db.models.AutoField)]
     parameters = []
     for o in objects:
-        parameters.append(tuple(f.get_db_prep_save(f.pre_save(o, True), connection=con) for f in fields))
+        try:
+            parameters.append(tuple(f.get_db_prep_save(f.pre_save(o, True), connection=con) for f in fields))
+        except ValueError:
+            print("BROKEN CONVERSION!")
+            print(o)
+            print("------------------")
+            print(objects)
+            print("------------------")
     table = model._meta.db_table
     column_names = ",".join(con.ops.quote_name(f.column) for f in fields)
     placeholders = ",".join(("%s",) * len(fields))
@@ -66,7 +73,7 @@ def update_many(objects, fields=[], using="default"):
 
     if not fields:
         raise ValueError("No fields to update, field names are %s." % names)
-    
+
     fields_with_pk = fields + [meta.pk]
     parameters = []
     for o in objects:

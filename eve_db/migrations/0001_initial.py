@@ -1,1935 +1,1551 @@
-# encoding: utf-8
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
-
-class Migration(SchemaMigration):
-
-    def forwards(self, orm):
-
-        # Adding model 'EveName'
-        db.create_table('eve_db_evename', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('category', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvCategory'], null=True, blank=True)),
-            ('group', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvGroup'], null=True, blank=True)),
-            ('type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvType'], null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['EveName'])
-
-        # Adding model 'EveUnit'
-        db.create_table('eve_db_eveunit', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=75)),
-            ('display_name', self.gf('django.db.models.fields.CharField')(max_length=30, blank=True)),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['EveUnit'])
-
-        # Adding model 'EveIcon'
-        db.create_table('eve_db_eveicon', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('file', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=255)),
-        ))
-        db.send_create_signal('eve_db', ['EveIcon'])
-
-        # Adding model 'EveGraphic'
-        db.create_table('eve_db_evegraphic', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('file', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('is_obsolete', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal('eve_db', ['EveGraphic'])
-
-        # Adding model 'InvMarketGroup'
-        db.create_table('eve_db_invmarketgroup', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('parent', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvMarketGroup'], null=True, blank=True)),
-            ('has_items', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('icon', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.EveIcon'], null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['InvMarketGroup'])
-
-        # Adding model 'InvCategory'
-        db.create_table('eve_db_invcategory', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('is_published', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('icon', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.EveIcon'], null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['InvCategory'])
-
-        # Adding model 'InvGroup'
-        db.create_table('eve_db_invgroup', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('category', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvCategory'], null=True, blank=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=150)),
-            ('description', self.gf('django.db.models.fields.TextField')()),
-            ('icon', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.EveIcon'], null=True, blank=True)),
-            ('use_base_price', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('allow_manufacture', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('allow_recycle', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('allow_anchoring', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('is_anchored', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('is_fittable_non_singleton', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('is_published', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal('eve_db', ['InvGroup'])
-
-        # Adding model 'InvMetaGroup'
-        db.create_table('eve_db_invmetagroup', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('description', self.gf('django.db.models.fields.TextField')()),
-            ('icon', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.EveIcon'], null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['InvMetaGroup'])
-
-        # Adding model 'InvType'
-        db.create_table('eve_db_invtype', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('group', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvGroup'], null=True, blank=True)),
-            ('market_group', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvMarketGroup'], null=True, blank=True)),
-            ('graphic', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.EveGraphic'], null=True, blank=True)),
-            ('icon', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.EveIcon'], null=True, blank=True)),
-            ('radius', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('mass', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('volume', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('capacity', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('portion_size', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('race', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.ChrRace'], null=True, blank=True)),
-            ('base_price', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('is_published', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('chance_of_duplicating', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['InvType'])
-
-        # Adding model 'InvTypeMaterial'
-        db.create_table('eve_db_invtypematerial', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='material_set', to=orm['eve_db.InvType'])),
-            ('material_type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='itemtype_set', to=orm['eve_db.InvType'])),
-            ('quantity', self.gf('django.db.models.fields.IntegerField')(default=0)),
-        ))
-        db.send_create_signal('eve_db', ['InvTypeMaterial'])
-
-        # Adding unique constraint on 'InvTypeMaterial', fields ['type', 'material_type']
-        db.create_unique('eve_db_invtypematerial', ['type_id', 'material_type_id'])
-
-        # Adding model 'InvMetaType'
-        db.create_table('eve_db_invmetatype', (
-            ('type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='inventorymetatype_type_set', unique=True, primary_key=True, to=orm['eve_db.InvType'])),
-            ('parent_type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='inventorymetatype_parent_type_set', to=orm['eve_db.InvType'])),
-            ('meta_group', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvMetaGroup'])),
-        ))
-        db.send_create_signal('eve_db', ['InvMetaType'])
-
-        # Adding model 'InvFlag'
-        db.create_table('eve_db_invflag', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('text', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('type_text', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('order', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['InvFlag'])
-
-        # Adding model 'DgmAttributeCategory'
-        db.create_table('eve_db_dgmattributecategory', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=30)),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['DgmAttributeCategory'])
-
-        # Adding model 'DgmAttributeType'
-        db.create_table('eve_db_dgmattributetype', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=75)),
-            ('category', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.DgmAttributeCategory'], null=True, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('icon', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.EveIcon'], null=True, blank=True)),
-            ('defaultvalue', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('is_published', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('display_name', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-            ('unit', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.EveUnit'], null=True, blank=True)),
-            ('is_stackable', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('high_is_good', self.gf('django.db.models.fields.BooleanField')(default=True)),
-        ))
-        db.send_create_signal('eve_db', ['DgmAttributeType'])
-
-        # Adding model 'DgmTypeAttribute'
-        db.create_table('eve_db_dgmtypeattribute', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('inventory_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvType'])),
-            ('attribute', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.DgmAttributeType'])),
-            ('value_int', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('value_float', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['DgmTypeAttribute'])
-
-        # Adding unique constraint on 'DgmTypeAttribute', fields ['inventory_type', 'attribute']
-        db.create_unique('eve_db_dgmtypeattribute', ['inventory_type_id', 'attribute_id'])
-
-        # Adding model 'InvBlueprintType'
-        db.create_table('eve_db_invblueprinttype', (
-            ('blueprint_type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='blueprint_type_set', unique=True, primary_key=True, to=orm['eve_db.InvType'])),
-            ('product_type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='blueprint_product_type_set', to=orm['eve_db.InvType'])),
-            ('parent_blueprint_type', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='parent_blueprint_type_set', null=True, to=orm['eve_db.InvType'])),
-            ('tech_level', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('research_productivity_time', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('research_material_time', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('research_copy_time', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('research_tech_time', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('productivity_modifier', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('material_modifier', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('waste_factor', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('max_production_limit', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['InvBlueprintType'])
-
-        # Adding model 'DgmEffect'
-        db.create_table('eve_db_dgmeffect', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=150)),
-            ('category', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('pre_expression', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('post_expression', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('guid', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('icon', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.EveIcon'], null=True, blank=True)),
-            ('is_offensive', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('is_assistance', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('duration_attribute', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='inventoryeffectdurationeattribute', null=True, to=orm['eve_db.DgmAttributeType'])),
-            ('tracking_speed_attribute', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='inventoryeffecttrackingspeedattribute', null=True, to=orm['eve_db.DgmAttributeType'])),
-            ('discharge_attribute', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='inventoryeffectdischargeattribute', null=True, to=orm['eve_db.DgmAttributeType'])),
-            ('range_attribute', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='inventoryeffectrangeattribute', null=True, to=orm['eve_db.DgmAttributeType'])),
-            ('falloff_attribute', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='inventoryeffectfalloffattribute', null=True, to=orm['eve_db.DgmAttributeType'])),
-            ('disallow_auto_repeat', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('is_published', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('display_name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('is_warp_safe', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('has_range_chance', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('has_electronic_chance', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('has_propulsion_chance', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('distribution', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('sfx_name', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-            ('npc_usage_chance_attribute', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='inventoryeffectnpcusagechanceattribute', null=True, to=orm['eve_db.DgmAttributeType'])),
-            ('npc_activation_chance_attribute', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='inventoryeffectnpcactivationchanceattribute', null=True, to=orm['eve_db.DgmAttributeType'])),
-            ('fitting_usage_chance_attribute', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='inventoryeffectfittingusagechanceattribute', null=True, to=orm['eve_db.DgmAttributeType'])),
-        ))
-        db.send_create_signal('eve_db', ['DgmEffect'])
-
-        # Adding model 'DgmTypeEffect'
-        db.create_table('eve_db_dgmtypeeffect', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvType'])),
-            ('effect', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.DgmEffect'])),
-            ('is_default', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal('eve_db', ['DgmTypeEffect'])
-
-        # Adding unique constraint on 'DgmTypeEffect', fields ['type', 'effect']
-        db.create_unique('eve_db_dgmtypeeffect', ['type_id', 'effect_id'])
-
-        # Adding model 'InvPOSResourcePurpose'
-        db.create_table('eve_db_invposresourcepurpose', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('purpose', self.gf('django.db.models.fields.CharField')(max_length=75, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['InvPOSResourcePurpose'])
-
-        # Adding model 'InvPOSResource'
-        db.create_table('eve_db_invposresource', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('control_tower_type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='tower_resource_set', to=orm['eve_db.InvType'])),
-            ('resource_type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='pos_resource_set', to=orm['eve_db.InvType'])),
-            ('purpose', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvPOSResourcePurpose'], null=True, blank=True)),
-            ('quantity', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('min_security_level', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('faction', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.ChrFaction'], null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['InvPOSResource'])
-
-        # Adding unique constraint on 'InvPOSResource', fields ['control_tower_type', 'resource_type']
-        db.create_unique('eve_db_invposresource', ['control_tower_type_id', 'resource_type_id'])
-
-        # Adding model 'InvTypeReaction'
-        db.create_table('eve_db_invtypereaction', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('reaction_type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='inventorytypereactions_reaction_type_set', to=orm['eve_db.InvType'])),
-            ('input', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='inventorytypereactions_type_set', to=orm['eve_db.InvType'])),
-            ('quantity', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['InvTypeReaction'])
-
-        # Adding unique constraint on 'InvTypeReaction', fields ['reaction_type', 'input', 'type']
-        db.create_unique('eve_db_invtypereaction', ['reaction_type_id', 'input', 'type_id'])
-
-        # Adding model 'InvContrabandType'
-        db.create_table('eve_db_invcontrabandtype', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('faction', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.ChrFaction'])),
-            ('type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvType'])),
-            ('standing_loss', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('confiscate_min_sec', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('fine_by_value', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('attack_min_sec', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['InvContrabandType'])
-
-        # Adding unique constraint on 'InvContrabandType', fields ['faction', 'type']
-        db.create_unique('eve_db_invcontrabandtype', ['faction_id', 'type_id'])
-
-        # Adding model 'MapUniverse'
-        db.create_table('eve_db_mapuniverse', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('x_min', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('x_max', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('y', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('y_min', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('y_max', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('z', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('z_min', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('x', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('radius', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['MapUniverse'])
-
-        # Adding model 'MapRegion'
-        db.create_table('eve_db_mapregion', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('faction', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.ChrFaction'], null=True, blank=True)),
-            ('x_min', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('x_max', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('y', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('y_min', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('y_max', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('z', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('z_min', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('x', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('radius', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['MapRegion'])
-
-        # Adding model 'MapRegionJump'
-        db.create_table('eve_db_mapregionjump', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('from_region', self.gf('django.db.models.fields.related.ForeignKey')(related_name='region_jumps_from_region_set', to=orm['eve_db.MapRegion'])),
-            ('to_region', self.gf('django.db.models.fields.related.ForeignKey')(related_name='region_jumps_to_region_set', to=orm['eve_db.MapRegion'])),
-        ))
-        db.send_create_signal('eve_db', ['MapRegionJump'])
-
-        # Adding unique constraint on 'MapRegionJump', fields ['from_region', 'to_region']
-        db.create_unique('eve_db_mapregionjump', ['from_region_id', 'to_region_id'])
-
-        # Adding model 'MapConstellation'
-        db.create_table('eve_db_mapconstellation', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('region', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.MapRegion'], null=True, blank=True)),
-            ('x_min', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('x_max', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('y', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('y_min', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('y_max', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('z', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('z_min', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('x', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('radius', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('faction', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.ChrFaction'], null=True, blank=True)),
-            ('sovereignty_start_time', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-            ('sovereignty_grace_start_time', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['MapConstellation'])
-
-        # Adding model 'MapConstellationJump'
-        db.create_table('eve_db_mapconstellationjump', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('from_region', self.gf('django.db.models.fields.related.ForeignKey')(related_name='constellation_jumps_from_region_set', to=orm['eve_db.MapRegion'])),
-            ('from_constellation', self.gf('django.db.models.fields.related.ForeignKey')(related_name='constellation_jumps_from_constellation_set', to=orm['eve_db.MapConstellation'])),
-            ('to_region', self.gf('django.db.models.fields.related.ForeignKey')(related_name='constellation_jumps_to_region_set', to=orm['eve_db.MapRegion'])),
-            ('to_constellation', self.gf('django.db.models.fields.related.ForeignKey')(related_name='constellation_jumps_to_constellation_set', to=orm['eve_db.MapConstellation'])),
-        ))
-        db.send_create_signal('eve_db', ['MapConstellationJump'])
-
-        # Adding unique constraint on 'MapConstellationJump', fields ['from_constellation', 'to_constellation']
-        db.create_unique('eve_db_mapconstellationjump', ['from_constellation_id', 'to_constellation_id'])
-
-        # Adding model 'MapSolarSystem'
-        db.create_table('eve_db_mapsolarsystem', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('region', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.MapRegion'], null=True, blank=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
-            ('constellation', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.MapConstellation'], null=True, blank=True)),
-            ('x_min', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('x_max', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('y', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('y_min', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('y_max', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('z', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('z_min', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('x', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('luminosity', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('is_border_system', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('is_fringe_system', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('is_corridor_system', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('is_hub_system', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('is_international', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('has_interregional_link', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('has_interconstellational_link', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('security_level', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('faction', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='solarsystem_set', null=True, to=orm['eve_db.ChrFaction'])),
-            ('radius', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('sun_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvType'], null=True, blank=True)),
-            ('security_class', self.gf('django.db.models.fields.CharField')(max_length=5, blank=True)),
-            ('sovereignty_level', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('sovereignty_start_time', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['MapSolarSystem'])
-
-        # Adding model 'MapSolarSystemJump'
-        db.create_table('eve_db_mapsolarsystemjump', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('from_region', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='solar_system_jumps_from_region_set', null=True, to=orm['eve_db.MapRegion'])),
-            ('from_constellation', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='solar_system_jumps_from_constellation_set', null=True, to=orm['eve_db.MapConstellation'])),
-            ('from_solar_system', self.gf('django.db.models.fields.related.ForeignKey')(related_name='solar_system_jumps_from_solar_system_set', to=orm['eve_db.MapSolarSystem'])),
-            ('to_region', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='solar_system_jumps_to_region_set', null=True, to=orm['eve_db.MapRegion'])),
-            ('to_constellation', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='solar_system_jumps_to_constellation_set', null=True, to=orm['eve_db.MapConstellation'])),
-            ('to_solar_system', self.gf('django.db.models.fields.related.ForeignKey')(related_name='solar_system_jumps_to_solar_system_set', to=orm['eve_db.MapSolarSystem'])),
-        ))
-        db.send_create_signal('eve_db', ['MapSolarSystemJump'])
-
-        # Adding unique constraint on 'MapSolarSystemJump', fields ['from_solar_system', 'to_solar_system']
-        db.create_unique('eve_db_mapsolarsystemjump', ['from_solar_system_id', 'to_solar_system_id'])
-
-        # Adding model 'MapJump'
-        db.create_table('eve_db_mapjump', (
-            ('origin_gate', self.gf('django.db.models.fields.related.ForeignKey')(related_name='stargate_jump_origin_set', unique=True, primary_key=True, to=orm['eve_db.MapDenormalize'])),
-            ('destination_gate', self.gf('django.db.models.fields.related.ForeignKey')(related_name='stargate_jump_destination_set', to=orm['eve_db.MapDenormalize'])),
-        ))
-        db.send_create_signal('eve_db', ['MapJump'])
-
-        # Adding model 'MapCelestialStatistic'
-        db.create_table('eve_db_mapcelestialstatistic', (
-            ('celestial', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.MapDenormalize'], unique=True, primary_key=True)),
-            ('temperature', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('spectral_class', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('luminousity', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('age', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('life', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('orbit_radius', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('eccentricity', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('mass_dust', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('mass_gas', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('is_fragmented', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('density', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('surface_gravity', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('escape_velocity', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('orbit_period', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('rotation_rate', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('is_locked', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('pressure', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('radius', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('mass', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['MapCelestialStatistic'])
-
-        # Adding model 'MapDenormalize'
-        db.create_table('eve_db_mapdenormalize', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvType'], null=True, blank=True)),
-            ('group', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvGroup'], null=True, blank=True)),
-            ('solar_system', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.MapSolarSystem'], null=True, blank=True)),
-            ('constellation', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.MapConstellation'], null=True, blank=True)),
-            ('region', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.MapRegion'], null=True, blank=True)),
-            ('orbit_id', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('x', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('y', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('z', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('radius', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
-            ('security', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('celestial_index', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('orbit_index', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['MapDenormalize'])
-
-        # Adding model 'MapLandmark'
-        db.create_table('eve_db_maplandmark', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('solar_system', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.MapSolarSystem'], null=True, blank=True)),
-            ('x', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('y', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('z', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('radius', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('icon', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.EveIcon'], null=True, blank=True)),
-            ('importance', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('url_2d', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['MapLandmark'])
-
-        # Adding model 'ChrRace'
-        db.create_table('eve_db_chrrace', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=30)),
-            ('short_description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('icon', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.EveIcon'], null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['ChrRace'])
-
-        # Adding model 'ChrBloodline'
-        db.create_table('eve_db_chrbloodline', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('race', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='bloodline_set', null=True, to=orm['eve_db.ChrRace'])),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('male_description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('female_description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('starter_ship_type', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='bloodline_starter_ship_set', null=True, to=orm['eve_db.InvType'])),
-            ('corporation', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.CrpNPCCorporation'], null=True, blank=True)),
-            ('starting_perception', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('starting_willpower', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('starting_charisma', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('starting_memory', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('starting_intelligence', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('icon', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.EveIcon'], null=True, blank=True)),
-            ('short_description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('short_male_description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('short_female_description', self.gf('django.db.models.fields.TextField')(blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['ChrBloodline'])
-
-        # Adding model 'ChrAncestry'
-        db.create_table('eve_db_chrancestry', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('bloodline', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.ChrBloodline'], null=True, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('perception_bonus', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('willpower_bonus', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('charisma_bonus', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('memory_bonus', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('intelligence_bonus', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('icon', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.EveIcon'], null=True, blank=True)),
-            ('short_description', self.gf('django.db.models.fields.TextField')(blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['ChrAncestry'])
-
-        # Adding model 'ChrAttribute'
-        db.create_table('eve_db_chrattribute', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('short_description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('notes', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('icon', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.EveIcon'], null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['ChrAttribute'])
-
-        # Adding model 'ChrFaction'
-        db.create_table('eve_db_chrfaction', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('solar_system', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='faction_set', null=True, to=orm['eve_db.MapSolarSystem'])),
-            ('corporation', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='faction_set', null=True, to=orm['eve_db.CrpNPCCorporation'])),
-            ('size_factor', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('station_count', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('station_system_count', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('icon', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.EveIcon'], null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['ChrFaction'])
-
-        # Adding model 'CrpActivity'
-        db.create_table('eve_db_crpactivity', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['CrpActivity'])
-
-        # Adding model 'CrpNPCCorporation'
-        db.create_table('eve_db_crpnpccorporation', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('size', self.gf('django.db.models.fields.CharField')(max_length=1, blank=True)),
-            ('extent', self.gf('django.db.models.fields.CharField')(max_length=1, blank=True)),
-            ('solar_system', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.MapSolarSystem'], null=True, blank=True)),
-            ('investor1', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='invested1_set', null=True, to=orm['eve_db.CrpNPCCorporation'])),
-            ('investor1_shares', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('investor2', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='invested2_set', null=True, to=orm['eve_db.CrpNPCCorporation'])),
-            ('investor2_shares', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('investor3', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='invested3_set', null=True, to=orm['eve_db.CrpNPCCorporation'])),
-            ('investor3_shares', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('investor4', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='invested4_set', null=True, to=orm['eve_db.CrpNPCCorporation'])),
-            ('investor4_shares', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('friendly_corp', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='friendly_with_set', null=True, to=orm['eve_db.CrpNPCCorporation'])),
-            ('enemy_corp', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='enemy_of_set', null=True, to=orm['eve_db.CrpNPCCorporation'])),
-            ('public_share_percent', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('initial_share_price', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('min_security', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('stations_are_scattered', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('fringe_systems', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('corridor_systems', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('hub_systems', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('border_systems', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('faction', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.ChrFaction'], null=True, blank=True)),
-            ('size_factor', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('station_count', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('station_system_count', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('icon', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.EveIcon'], null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['CrpNPCCorporation'])
-
-        # Adding model 'CrpNPCDivision'
-        db.create_table('eve_db_crpnpcdivision', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('leader_type', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['CrpNPCDivision'])
-
-        # Adding model 'CrpNPCCorporationDivision'
-        db.create_table('eve_db_crpnpccorporationdivision', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('corporation', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.CrpNPCCorporation'])),
-            ('division', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.CrpNPCDivision'])),
-            ('size', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['CrpNPCCorporationDivision'])
-
-        # Adding unique constraint on 'CrpNPCCorporationDivision', fields ['corporation', 'division']
-        db.create_unique('eve_db_crpnpccorporationdivision', ['corporation_id', 'division_id'])
-
-        # Adding model 'CrpNPCCorporationTrade'
-        db.create_table('eve_db_crpnpccorporationtrade', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('corporation', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.CrpNPCCorporation'])),
-            ('type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvType'], null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['CrpNPCCorporationTrade'])
-
-        # Adding unique constraint on 'CrpNPCCorporationTrade', fields ['corporation', 'type']
-        db.create_unique('eve_db_crpnpccorporationtrade', ['corporation_id', 'type_id'])
-
-        # Adding model 'CrpNPCCorporationResearchField'
-        db.create_table('eve_db_crpnpccorporationresearchfield', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('corporation', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.CrpNPCCorporation'])),
-            ('skill', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvType'], null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['CrpNPCCorporationResearchField'])
-
-        # Adding unique constraint on 'CrpNPCCorporationResearchField', fields ['skill', 'corporation']
-        db.create_unique('eve_db_crpnpccorporationresearchfield', ['skill_id', 'corporation_id'])
-
-        # Adding model 'AgtAgentType'
-        db.create_table('eve_db_agtagenttype', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-        ))
-        db.send_create_signal('eve_db', ['AgtAgentType'])
-
-        # Adding model 'AgtAgent'
-        db.create_table('eve_db_agtagent', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('division', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.CrpNPCDivision'], null=True, blank=True)),
-            ('corporation', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.CrpNPCCorporation'], null=True, blank=True)),
-            ('location', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.MapDenormalize'], null=True, blank=True)),
-            ('level', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('quality', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.AgtAgentType'], null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['AgtAgent'])
-
-        # Adding model 'AgtConfig'
-        db.create_table('eve_db_agtconfig', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('agent', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.AgtAgent'])),
-            ('key', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('value', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['AgtConfig'])
-
-        # Adding unique constraint on 'AgtConfig', fields ['agent', 'key']
-        db.create_unique('eve_db_agtconfig', ['agent_id', 'key'])
-
-        # Adding model 'RamActivity'
-        db.create_table('eve_db_ramactivity', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=75, blank=True)),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-            ('icon_filename', self.gf('django.db.models.fields.CharField')(max_length=50, blank=True)),
-            ('is_published', self.gf('django.db.models.fields.BooleanField')(default=True)),
-        ))
-        db.send_create_signal('eve_db', ['RamActivity'])
-
-        # Adding model 'RamAssemblyLineType'
-        db.create_table('eve_db_ramassemblylinetype', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-            ('base_time_multiplier', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('base_material_multiplier', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('volume', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('activity', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.RamActivity'], null=True, blank=True)),
-            ('min_cost_per_hour', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['RamAssemblyLineType'])
-
-        # Adding model 'RamAssemblyLine'
-        db.create_table('eve_db_ramassemblyline', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('assembly_line_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.RamAssemblyLineType'], null=True, blank=True)),
-            ('station', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.StaStation'], null=True, blank=True)),
-            ('ui_grouping_id', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('cost_install', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('cost_per_hour', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('discount_per_good_standing_point', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('surcharge_per_bad_standing_point', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('minimum_standing', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('minimum_char_security', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('minimum_corp_security', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('maximum_char_security', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('maximum_corp_security', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('owner', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.CrpNPCCorporation'], null=True, blank=True)),
-            ('activity', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.RamActivity'], null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['RamAssemblyLine'])
-
-        # Adding model 'RamAssemblyLineTypeDetailPerCategory'
-        db.create_table('eve_db_ramassemblylinetypedetailpercategory', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('assembly_line_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.RamAssemblyLineType'])),
-            ('category', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvCategory'])),
-            ('time_multiplier', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('material_multiplier', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['RamAssemblyLineTypeDetailPerCategory'])
-
-        # Adding unique constraint on 'RamAssemblyLineTypeDetailPerCategory', fields ['assembly_line_type', 'category']
-        db.create_unique('eve_db_ramassemblylinetypedetailpercategory', ['assembly_line_type_id', 'category_id'])
-
-        # Adding model 'RamAssemblyLineTypeDetailPerGroup'
-        db.create_table('eve_db_ramassemblylinetypedetailpergroup', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('assembly_line_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.RamAssemblyLineType'])),
-            ('group', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvGroup'])),
-            ('time_multiplier', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('material_multiplier', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['RamAssemblyLineTypeDetailPerGroup'])
-
-        # Adding unique constraint on 'RamAssemblyLineTypeDetailPerGroup', fields ['assembly_line_type', 'group']
-        db.create_unique('eve_db_ramassemblylinetypedetailpergroup', ['assembly_line_type_id', 'group_id'])
-
-        # Adding model 'RamAssemblyLineStations'
-        db.create_table('eve_db_ramassemblylinestations', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('station', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.StaStation'])),
-            ('assembly_line_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.RamAssemblyLineType'])),
-            ('quantity', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('station_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.StaStationType'], null=True, blank=True)),
-            ('owner', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.CrpNPCCorporation'], null=True, blank=True)),
-            ('solar_system', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.MapSolarSystem'], null=True, blank=True)),
-            ('region', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.MapRegion'], null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['RamAssemblyLineStations'])
-
-        # Adding unique constraint on 'RamAssemblyLineStations', fields ['station', 'assembly_line_type']
-        db.create_unique('eve_db_ramassemblylinestations', ['station_id', 'assembly_line_type_id'])
-
-        # Adding model 'RamTypeRequirement'
-        db.create_table('eve_db_ramtyperequirement', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='type_requirement', to=orm['eve_db.InvType'])),
-            ('activity_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.RamActivity'])),
-            ('required_type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='required_type', to=orm['eve_db.InvType'])),
-            ('quantity', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('damage_per_job', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('recycle', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal('eve_db', ['RamTypeRequirement'])
-
-        # Adding unique constraint on 'RamTypeRequirement', fields ['type', 'activity_type', 'required_type']
-        db.create_unique('eve_db_ramtyperequirement', ['type_id', 'activity_type_id', 'required_type_id'])
-
-        # Adding model 'StaService'
-        db.create_table('eve_db_staservice', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['StaService'])
-
-        # Adding model 'StaStationType'
-        db.create_table('eve_db_stastationtype', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('docking_bay_graphic', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='docking_bay_graphic', null=True, to=orm['eve_db.EveGraphic'])),
-            ('hangar_graphic', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='hangar_graphic', null=True, to=orm['eve_db.EveGraphic'])),
-            ('dock_entry_x', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('dock_orientation_x', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('dock_entry_y', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('dock_orientation_y', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('dock_entry_z', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('dock_orientation_z', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('operation', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.StaOperation'], null=True, blank=True)),
-            ('office_slots', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('reprocessing_efficiency', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('is_conquerable', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal('eve_db', ['StaStationType'])
-
-        # Adding model 'StaOperation'
-        db.create_table('eve_db_staoperation', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('activity_id', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('fringe', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('corridor', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('hub', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('border', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('ratio', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('caldari_station_type', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='caldari_station_operation_set', null=True, to=orm['eve_db.StaStationType'])),
-            ('minmatar_station_type', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='minmatar_station_operation_set', null=True, to=orm['eve_db.StaStationType'])),
-            ('amarr_station_type', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='amarr_station_operation_set', null=True, to=orm['eve_db.StaStationType'])),
-            ('gallente_station_type', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='gallente_station_operation_set', null=True, to=orm['eve_db.StaStationType'])),
-            ('jove_station_type', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='jove_station_operation_set', null=True, to=orm['eve_db.StaStationType'])),
-        ))
-        db.send_create_signal('eve_db', ['StaOperation'])
-
-        # Adding model 'StaStation'
-        db.create_table('eve_db_stastation', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('security', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('docking_cost_per_volume', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('max_ship_volume_dockable', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('office_rental_cost', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('operation', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.StaOperation'], null=True, blank=True)),
-            ('type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.StaStationType'], null=True, blank=True)),
-            ('corporation', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.CrpNPCCorporation'], null=True, blank=True)),
-            ('solar_system', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.MapSolarSystem'], null=True, blank=True)),
-            ('constellation', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.MapConstellation'], null=True, blank=True)),
-            ('region', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.MapRegion'], null=True, blank=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-            ('x', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('y', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('z', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('reprocessing_efficiency', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('reprocessing_stations_take', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('reprocessing_hangar_flag', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['StaStation'])
-
-        # Adding model 'StaOperationServices'
-        db.create_table('eve_db_staoperationservices', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('operation', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.StaOperation'])),
-            ('service', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.StaService'])),
-        ))
-        db.send_create_signal('eve_db', ['StaOperationServices'])
-
-        # Adding unique constraint on 'StaOperationServices', fields ['operation', 'service']
-        db.create_unique('eve_db_staoperationservices', ['operation_id', 'service_id'])
-
-        # Adding model 'CrtCategory'
-        db.create_table('eve_db_crtcategory', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['CrtCategory'])
-
-        # Adding model 'CrtClass'
-        db.create_table('eve_db_crtclass', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['CrtClass'])
-
-        # Adding model 'CrtCertificate'
-        db.create_table('eve_db_crtcertificate', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('category', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.CrtCategory'], null=True, blank=True)),
-            ('cert_class', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.CrtClass'], null=True, blank=True)),
-            ('grade', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('corporation', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.CrpNPCCorporation'], null=True, blank=True)),
-            ('icon_num', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['CrtCertificate'])
-
-        # Adding model 'CrtRelationship'
-        db.create_table('eve_db_crtrelationship', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('parent', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='parent_crtrelationship_set', null=True, to=orm['eve_db.CrtCertificate'])),
-            ('parent_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvType'], null=True, blank=True)),
-            ('parent_level', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('child', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='child_crtrelationship_set', null=True, to=orm['eve_db.CrtCertificate'])),
-        ))
-        db.send_create_signal('eve_db', ['CrtRelationship'])
-
-        # Adding model 'CrtRecommendation'
-        db.create_table('eve_db_crtrecommendation', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('ship_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvType'], null=True, blank=True)),
-            ('certificate', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.CrtCertificate'], null=True, blank=True)),
-            ('recommendation_level', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['CrtRecommendation'])
-
-        # Adding model 'PlanetSchematic'
-        db.create_table('eve_db_planetschematic', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True)),
-            ('cycle_time', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('eve_db', ['PlanetSchematic'])
-
-        # Adding model 'PlanetSchematicsPinMap'
-        db.create_table('eve_db_planetschematicspinmap', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('schematic', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.PlanetSchematic'])),
-            ('type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvType'])),
-        ))
-        db.send_create_signal('eve_db', ['PlanetSchematicsPinMap'])
-
-        # Adding unique constraint on 'PlanetSchematicsPinMap', fields ['schematic', 'type']
-        db.create_unique('eve_db_planetschematicspinmap', ['schematic_id', 'type_id'])
-
-        # Adding model 'PlanetSchematicsTypeMap'
-        db.create_table('eve_db_planetschematicstypemap', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('schematic', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.PlanetSchematic'])),
-            ('type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['eve_db.InvType'])),
-            ('quantity', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('is_input', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal('eve_db', ['PlanetSchematicsTypeMap'])
-
-        # Adding unique constraint on 'PlanetSchematicsTypeMap', fields ['schematic', 'type']
-        db.create_unique('eve_db_planetschematicstypemap', ['schematic_id', 'type_id'])
-
-
-    def backwards(self, orm):
-
-        # Removing unique constraint on 'PlanetSchematicsTypeMap', fields ['schematic', 'type']
-        db.delete_unique('eve_db_planetschematicstypemap', ['schematic_id', 'type_id'])
-
-        # Removing unique constraint on 'PlanetSchematicsPinMap', fields ['schematic', 'type']
-        db.delete_unique('eve_db_planetschematicspinmap', ['schematic_id', 'type_id'])
-
-        # Removing unique constraint on 'StaOperationServices', fields ['operation', 'service']
-        db.delete_unique('eve_db_staoperationservices', ['operation_id', 'service_id'])
-
-        # Removing unique constraint on 'RamTypeRequirement', fields ['type', 'activity_type', 'required_type']
-        db.delete_unique('eve_db_ramtyperequirement', ['type_id', 'activity_type_id', 'required_type_id'])
-
-        # Removing unique constraint on 'RamAssemblyLineStations', fields ['station', 'assembly_line_type']
-        db.delete_unique('eve_db_ramassemblylinestations', ['station_id', 'assembly_line_type_id'])
-
-        # Removing unique constraint on 'RamAssemblyLineTypeDetailPerGroup', fields ['assembly_line_type', 'group']
-        db.delete_unique('eve_db_ramassemblylinetypedetailpergroup', ['assembly_line_type_id', 'group_id'])
-
-        # Removing unique constraint on 'RamAssemblyLineTypeDetailPerCategory', fields ['assembly_line_type', 'category']
-        db.delete_unique('eve_db_ramassemblylinetypedetailpercategory', ['assembly_line_type_id', 'category_id'])
-
-        # Removing unique constraint on 'AgtConfig', fields ['agent', 'key']
-        db.delete_unique('eve_db_agtconfig', ['agent_id', 'key'])
-
-        # Removing unique constraint on 'CrpNPCCorporationResearchField', fields ['skill', 'corporation']
-        db.delete_unique('eve_db_crpnpccorporationresearchfield', ['skill_id', 'corporation_id'])
-
-        # Removing unique constraint on 'CrpNPCCorporationTrade', fields ['corporation', 'type']
-        db.delete_unique('eve_db_crpnpccorporationtrade', ['corporation_id', 'type_id'])
-
-        # Removing unique constraint on 'CrpNPCCorporationDivision', fields ['corporation', 'division']
-        db.delete_unique('eve_db_crpnpccorporationdivision', ['corporation_id', 'division_id'])
-
-        # Removing unique constraint on 'MapSolarSystemJump', fields ['from_solar_system', 'to_solar_system']
-        db.delete_unique('eve_db_mapsolarsystemjump', ['from_solar_system_id', 'to_solar_system_id'])
-
-        # Removing unique constraint on 'MapConstellationJump', fields ['from_constellation', 'to_constellation']
-        db.delete_unique('eve_db_mapconstellationjump', ['from_constellation_id', 'to_constellation_id'])
-
-        # Removing unique constraint on 'MapRegionJump', fields ['from_region', 'to_region']
-        db.delete_unique('eve_db_mapregionjump', ['from_region_id', 'to_region_id'])
-
-        # Removing unique constraint on 'InvContrabandType', fields ['faction', 'type']
-        db.delete_unique('eve_db_invcontrabandtype', ['faction_id', 'type_id'])
-
-        # Removing unique constraint on 'InvTypeReaction', fields ['reaction_type', 'input', 'type']
-        db.delete_unique('eve_db_invtypereaction', ['reaction_type_id', 'input', 'type_id'])
-
-        # Removing unique constraint on 'InvPOSResource', fields ['control_tower_type', 'resource_type']
-        db.delete_unique('eve_db_invposresource', ['control_tower_type_id', 'resource_type_id'])
-
-        # Removing unique constraint on 'DgmTypeEffect', fields ['type', 'effect']
-        db.delete_unique('eve_db_dgmtypeeffect', ['type_id', 'effect_id'])
-
-        # Removing unique constraint on 'DgmTypeAttribute', fields ['inventory_type', 'attribute']
-        db.delete_unique('eve_db_dgmtypeattribute', ['inventory_type_id', 'attribute_id'])
-
-        # Removing unique constraint on 'InvTypeMaterial', fields ['type', 'material_type']
-        db.delete_unique('eve_db_invtypematerial', ['type_id', 'material_type_id'])
-
-        # Deleting model 'EveName'
-        db.delete_table('eve_db_evename')
-
-        # Deleting model 'EveUnit'
-        db.delete_table('eve_db_eveunit')
-
-        # Deleting model 'EveIcon'
-        db.delete_table('eve_db_eveicon')
-
-        # Deleting model 'EveGraphic'
-        db.delete_table('eve_db_evegraphic')
-
-        # Deleting model 'InvMarketGroup'
-        db.delete_table('eve_db_invmarketgroup')
-
-        # Deleting model 'InvCategory'
-        db.delete_table('eve_db_invcategory')
-
-        # Deleting model 'InvGroup'
-        db.delete_table('eve_db_invgroup')
-
-        # Deleting model 'InvMetaGroup'
-        db.delete_table('eve_db_invmetagroup')
-
-        # Deleting model 'InvType'
-        db.delete_table('eve_db_invtype')
-
-        # Deleting model 'InvTypeMaterial'
-        db.delete_table('eve_db_invtypematerial')
-
-        # Deleting model 'InvMetaType'
-        db.delete_table('eve_db_invmetatype')
-
-        # Deleting model 'InvFlag'
-        db.delete_table('eve_db_invflag')
-
-        # Deleting model 'DgmAttributeCategory'
-        db.delete_table('eve_db_dgmattributecategory')
-
-        # Deleting model 'DgmAttributeType'
-        db.delete_table('eve_db_dgmattributetype')
-
-        # Deleting model 'DgmTypeAttribute'
-        db.delete_table('eve_db_dgmtypeattribute')
-
-        # Deleting model 'InvBlueprintType'
-        db.delete_table('eve_db_invblueprinttype')
-
-        # Deleting model 'DgmEffect'
-        db.delete_table('eve_db_dgmeffect')
-
-        # Deleting model 'DgmTypeEffect'
-        db.delete_table('eve_db_dgmtypeeffect')
-
-        # Deleting model 'InvPOSResourcePurpose'
-        db.delete_table('eve_db_invposresourcepurpose')
-
-        # Deleting model 'InvPOSResource'
-        db.delete_table('eve_db_invposresource')
-
-        # Deleting model 'InvTypeReaction'
-        db.delete_table('eve_db_invtypereaction')
-
-        # Deleting model 'InvContrabandType'
-        db.delete_table('eve_db_invcontrabandtype')
-
-        # Deleting model 'MapUniverse'
-        db.delete_table('eve_db_mapuniverse')
-
-        # Deleting model 'MapRegion'
-        db.delete_table('eve_db_mapregion')
-
-        # Deleting model 'MapRegionJump'
-        db.delete_table('eve_db_mapregionjump')
-
-        # Deleting model 'MapConstellation'
-        db.delete_table('eve_db_mapconstellation')
-
-        # Deleting model 'MapConstellationJump'
-        db.delete_table('eve_db_mapconstellationjump')
-
-        # Deleting model 'MapSolarSystem'
-        db.delete_table('eve_db_mapsolarsystem')
-
-        # Deleting model 'MapSolarSystemJump'
-        db.delete_table('eve_db_mapsolarsystemjump')
-
-        # Deleting model 'MapJump'
-        db.delete_table('eve_db_mapjump')
-
-        # Deleting model 'MapCelestialStatistic'
-        db.delete_table('eve_db_mapcelestialstatistic')
-
-        # Deleting model 'MapDenormalize'
-        db.delete_table('eve_db_mapdenormalize')
-
-        # Deleting model 'MapLandmark'
-        db.delete_table('eve_db_maplandmark')
-
-        # Deleting model 'ChrRace'
-        db.delete_table('eve_db_chrrace')
-
-        # Deleting model 'ChrBloodline'
-        db.delete_table('eve_db_chrbloodline')
-
-        # Deleting model 'ChrAncestry'
-        db.delete_table('eve_db_chrancestry')
-
-        # Deleting model 'ChrAttribute'
-        db.delete_table('eve_db_chrattribute')
-
-        # Deleting model 'ChrFaction'
-        db.delete_table('eve_db_chrfaction')
-
-        # Deleting model 'CrpActivity'
-        db.delete_table('eve_db_crpactivity')
-
-        # Deleting model 'CrpNPCCorporation'
-        db.delete_table('eve_db_crpnpccorporation')
-
-        # Deleting model 'CrpNPCDivision'
-        db.delete_table('eve_db_crpnpcdivision')
-
-        # Deleting model 'CrpNPCCorporationDivision'
-        db.delete_table('eve_db_crpnpccorporationdivision')
-
-        # Deleting model 'CrpNPCCorporationTrade'
-        db.delete_table('eve_db_crpnpccorporationtrade')
-
-        # Deleting model 'CrpNPCCorporationResearchField'
-        db.delete_table('eve_db_crpnpccorporationresearchfield')
-
-        # Deleting model 'AgtAgentType'
-        db.delete_table('eve_db_agtagenttype')
-
-        # Deleting model 'AgtAgent'
-        db.delete_table('eve_db_agtagent')
-
-        # Deleting model 'AgtConfig'
-        db.delete_table('eve_db_agtconfig')
-
-        # Deleting model 'RamActivity'
-        db.delete_table('eve_db_ramactivity')
-
-        # Deleting model 'RamAssemblyLineType'
-        db.delete_table('eve_db_ramassemblylinetype')
-
-        # Deleting model 'RamAssemblyLine'
-        db.delete_table('eve_db_ramassemblyline')
-
-        # Deleting model 'RamAssemblyLineTypeDetailPerCategory'
-        db.delete_table('eve_db_ramassemblylinetypedetailpercategory')
-
-        # Deleting model 'RamAssemblyLineTypeDetailPerGroup'
-        db.delete_table('eve_db_ramassemblylinetypedetailpergroup')
-
-        # Deleting model 'RamAssemblyLineStations'
-        db.delete_table('eve_db_ramassemblylinestations')
-
-        # Deleting model 'RamTypeRequirement'
-        db.delete_table('eve_db_ramtyperequirement')
-
-        # Deleting model 'StaService'
-        db.delete_table('eve_db_staservice')
-
-        # Deleting model 'StaStationType'
-        db.delete_table('eve_db_stastationtype')
-
-        # Deleting model 'StaOperation'
-        db.delete_table('eve_db_staoperation')
-
-        # Deleting model 'StaStation'
-        db.delete_table('eve_db_stastation')
-
-        # Deleting model 'StaOperationServices'
-        db.delete_table('eve_db_staoperationservices')
-
-        # Deleting model 'CrtCategory'
-        db.delete_table('eve_db_crtcategory')
-
-        # Deleting model 'CrtClass'
-        db.delete_table('eve_db_crtclass')
-
-        # Deleting model 'CrtCertificate'
-        db.delete_table('eve_db_crtcertificate')
-
-        # Deleting model 'CrtRelationship'
-        db.delete_table('eve_db_crtrelationship')
-
-        # Deleting model 'CrtRecommendation'
-        db.delete_table('eve_db_crtrecommendation')
-
-        # Deleting model 'PlanetSchematic'
-        db.delete_table('eve_db_planetschematic')
-
-        # Deleting model 'PlanetSchematicsPinMap'
-        db.delete_table('eve_db_planetschematicspinmap')
-
-        # Deleting model 'PlanetSchematicsTypeMap'
-        db.delete_table('eve_db_planetschematicstypemap')
-
-
-    models = {
-        'eve_db.agtagent': {
-            'Meta': {'ordering': "['id']", 'object_name': 'AgtAgent'},
-            'corporation': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.CrpNPCCorporation']", 'null': 'True', 'blank': 'True'}),
-            'division': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.CrpNPCDivision']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'level': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'location': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.MapDenormalize']", 'null': 'True', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'quality': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.AgtAgentType']", 'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.agtagenttype': {
-            'Meta': {'ordering': "['id']", 'object_name': 'AgtAgentType'},
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'})
-        },
-        'eve_db.agtconfig': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('agent', 'key'),)", 'object_name': 'AgtConfig'},
-            'agent': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.AgtAgent']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'key': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'value': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.chrancestry': {
-            'Meta': {'ordering': "['id']", 'object_name': 'ChrAncestry'},
-            'bloodline': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.ChrBloodline']", 'null': 'True', 'blank': 'True'}),
-            'charisma_bonus': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'icon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.EveIcon']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'intelligence_bonus': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'memory_bonus': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'perception_bonus': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'short_description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'willpower_bonus': ('django.db.models.fields.IntegerField', [], {'default': '0'})
-        },
-        'eve_db.chrattribute': {
-            'Meta': {'ordering': "['id']", 'object_name': 'ChrAttribute'},
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'icon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.EveIcon']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'notes': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'short_description': ('django.db.models.fields.TextField', [], {'blank': 'True'})
-        },
-        'eve_db.chrbloodline': {
-            'Meta': {'ordering': "['id']", 'object_name': 'ChrBloodline'},
-            'corporation': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.CrpNPCCorporation']", 'null': 'True', 'blank': 'True'}),
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'female_description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'icon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.EveIcon']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'male_description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'race': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'bloodline_set'", 'null': 'True', 'to': "orm['eve_db.ChrRace']"}),
-            'short_description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'short_female_description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'short_male_description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'starter_ship_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'bloodline_starter_ship_set'", 'null': 'True', 'to': "orm['eve_db.InvType']"}),
-            'starting_charisma': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'starting_intelligence': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'starting_memory': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'starting_perception': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'starting_willpower': ('django.db.models.fields.IntegerField', [], {'default': '0'})
-        },
-        'eve_db.chrfaction': {
-            'Meta': {'ordering': "['id']", 'object_name': 'ChrFaction'},
-            'corporation': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'faction_set'", 'null': 'True', 'to': "orm['eve_db.CrpNPCCorporation']"}),
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'icon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.EveIcon']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'size_factor': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'solar_system': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'faction_set'", 'null': 'True', 'to': "orm['eve_db.MapSolarSystem']"}),
-            'station_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'station_system_count': ('django.db.models.fields.IntegerField', [], {'default': '0'})
-        },
-        'eve_db.chrrace': {
-            'Meta': {'ordering': "['id']", 'object_name': 'ChrRace'},
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'icon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.EveIcon']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
-            'short_description': ('django.db.models.fields.TextField', [], {'blank': 'True'})
-        },
-        'eve_db.crpactivity': {
-            'Meta': {'ordering': "['id']", 'object_name': 'CrpActivity'},
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        'eve_db.crpnpccorporation': {
-            'Meta': {'ordering': "['id']", 'object_name': 'CrpNPCCorporation'},
-            'border_systems': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'corridor_systems': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'enemy_corp': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'enemy_of_set'", 'null': 'True', 'to': "orm['eve_db.CrpNPCCorporation']"}),
-            'extent': ('django.db.models.fields.CharField', [], {'max_length': '1', 'blank': 'True'}),
-            'faction': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.ChrFaction']", 'null': 'True', 'blank': 'True'}),
-            'friendly_corp': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'friendly_with_set'", 'null': 'True', 'to': "orm['eve_db.CrpNPCCorporation']"}),
-            'fringe_systems': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'hub_systems': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'icon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.EveIcon']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'initial_share_price': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'investor1': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'invested1_set'", 'null': 'True', 'to': "orm['eve_db.CrpNPCCorporation']"}),
-            'investor1_shares': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'investor2': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'invested2_set'", 'null': 'True', 'to': "orm['eve_db.CrpNPCCorporation']"}),
-            'investor2_shares': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'investor3': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'invested3_set'", 'null': 'True', 'to': "orm['eve_db.CrpNPCCorporation']"}),
-            'investor3_shares': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'investor4': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'invested4_set'", 'null': 'True', 'to': "orm['eve_db.CrpNPCCorporation']"}),
-            'investor4_shares': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'min_security': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'public_share_percent': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'size': ('django.db.models.fields.CharField', [], {'max_length': '1', 'blank': 'True'}),
-            'size_factor': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'solar_system': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.MapSolarSystem']", 'null': 'True', 'blank': 'True'}),
-            'station_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'station_system_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'stations_are_scattered': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
-        },
-        'eve_db.crpnpccorporationdivision': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('corporation', 'division'),)", 'object_name': 'CrpNPCCorporationDivision'},
-            'corporation': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.CrpNPCCorporation']"}),
-            'division': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.CrpNPCDivision']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'size': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.crpnpccorporationresearchfield': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('skill', 'corporation'),)", 'object_name': 'CrpNPCCorporationResearchField'},
-            'corporation': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.CrpNPCCorporation']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'skill': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvType']", 'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.crpnpccorporationtrade': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('corporation', 'type'),)", 'object_name': 'CrpNPCCorporationTrade'},
-            'corporation': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.CrpNPCCorporation']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvType']", 'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.crpnpcdivision': {
-            'Meta': {'ordering': "['id']", 'object_name': 'CrpNPCDivision'},
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'leader_type': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'})
-        },
-        'eve_db.crtcategory': {
-            'Meta': {'ordering': "['id']", 'object_name': 'CrtCategory'},
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'})
-        },
-        'eve_db.crtcertificate': {
-            'Meta': {'ordering': "['id']", 'object_name': 'CrtCertificate'},
-            'category': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.CrtCategory']", 'null': 'True', 'blank': 'True'}),
-            'cert_class': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.CrtClass']", 'null': 'True', 'blank': 'True'}),
-            'corporation': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.CrpNPCCorporation']", 'null': 'True', 'blank': 'True'}),
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'grade': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'icon_num': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'})
-        },
-        'eve_db.crtclass': {
-            'Meta': {'ordering': "['id']", 'object_name': 'CrtClass'},
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'})
-        },
-        'eve_db.crtrecommendation': {
-            'Meta': {'ordering': "['id']", 'object_name': 'CrtRecommendation'},
-            'certificate': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.CrtCertificate']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'recommendation_level': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'ship_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvType']", 'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.crtrelationship': {
-            'Meta': {'ordering': "['id']", 'object_name': 'CrtRelationship'},
-            'child': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'child_crtrelationship_set'", 'null': 'True', 'to': "orm['eve_db.CrtCertificate']"}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'parent': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'parent_crtrelationship_set'", 'null': 'True', 'to': "orm['eve_db.CrtCertificate']"}),
-            'parent_level': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'parent_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvType']", 'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.dgmattributecategory': {
-            'Meta': {'ordering': "['id']", 'object_name': 'DgmAttributeCategory'},
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '30'})
-        },
-        'eve_db.dgmattributetype': {
-            'Meta': {'ordering': "['id']", 'object_name': 'DgmAttributeType'},
-            'category': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.DgmAttributeCategory']", 'null': 'True', 'blank': 'True'}),
-            'defaultvalue': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'display_name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'high_is_good': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'icon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.EveIcon']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'is_published': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_stackable': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '75'}),
-            'unit': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.EveUnit']", 'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.dgmeffect': {
-            'Meta': {'ordering': "['id']", 'object_name': 'DgmEffect'},
-            'category': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'disallow_auto_repeat': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'discharge_attribute': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'inventoryeffectdischargeattribute'", 'null': 'True', 'to': "orm['eve_db.DgmAttributeType']"}),
-            'display_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'distribution': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'duration_attribute': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'inventoryeffectdurationeattribute'", 'null': 'True', 'to': "orm['eve_db.DgmAttributeType']"}),
-            'falloff_attribute': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'inventoryeffectfalloffattribute'", 'null': 'True', 'to': "orm['eve_db.DgmAttributeType']"}),
-            'fitting_usage_chance_attribute': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'inventoryeffectfittingusagechanceattribute'", 'null': 'True', 'to': "orm['eve_db.DgmAttributeType']"}),
-            'guid': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'has_electronic_chance': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'has_propulsion_chance': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'has_range_chance': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'icon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.EveIcon']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'is_assistance': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_offensive': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_published': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_warp_safe': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
-            'npc_activation_chance_attribute': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'inventoryeffectnpcactivationchanceattribute'", 'null': 'True', 'to': "orm['eve_db.DgmAttributeType']"}),
-            'npc_usage_chance_attribute': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'inventoryeffectnpcusagechanceattribute'", 'null': 'True', 'to': "orm['eve_db.DgmAttributeType']"}),
-            'post_expression': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'pre_expression': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'range_attribute': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'inventoryeffectrangeattribute'", 'null': 'True', 'to': "orm['eve_db.DgmAttributeType']"}),
-            'sfx_name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'tracking_speed_attribute': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'inventoryeffecttrackingspeedattribute'", 'null': 'True', 'to': "orm['eve_db.DgmAttributeType']"})
-        },
-        'eve_db.dgmtypeattribute': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('inventory_type', 'attribute'),)", 'object_name': 'DgmTypeAttribute'},
-            'attribute': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.DgmAttributeType']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'inventory_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvType']"}),
-            'value_float': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'value_int': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.dgmtypeeffect': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('type', 'effect'),)", 'object_name': 'DgmTypeEffect'},
-            'effect': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.DgmEffect']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_default': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvType']"})
-        },
-        'eve_db.evegraphic': {
-            'Meta': {'ordering': "['id']", 'object_name': 'EveGraphic'},
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'file': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'is_obsolete': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        'eve_db.eveicon': {
-            'Meta': {'ordering': "['id']", 'object_name': 'EveIcon'},
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'file': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'})
-        },
-        'eve_db.evename': {
-            'Meta': {'ordering': "['id']", 'object_name': 'EveName'},
-            'category': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvCategory']", 'null': 'True', 'blank': 'True'}),
-            'group': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvGroup']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvType']", 'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.eveunit': {
-            'Meta': {'ordering': "['id']", 'object_name': 'EveUnit'},
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'display_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '75'})
-        },
-        'eve_db.invblueprinttype': {
-            'Meta': {'ordering': "['blueprint_type']", 'object_name': 'InvBlueprintType'},
-            'blueprint_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'blueprint_type_set'", 'unique': 'True', 'primary_key': 'True', 'to': "orm['eve_db.InvType']"}),
-            'material_modifier': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'max_production_limit': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'parent_blueprint_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'parent_blueprint_type_set'", 'null': 'True', 'to': "orm['eve_db.InvType']"}),
-            'product_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'blueprint_product_type_set'", 'to': "orm['eve_db.InvType']"}),
-            'productivity_modifier': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'research_copy_time': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'research_material_time': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'research_productivity_time': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'research_tech_time': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'tech_level': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'waste_factor': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.invcategory': {
-            'Meta': {'ordering': "['id']", 'object_name': 'InvCategory'},
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'icon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.EveIcon']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'is_published': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        'eve_db.invcontrabandtype': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('faction', 'type'),)", 'object_name': 'InvContrabandType'},
-            'attack_min_sec': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'confiscate_min_sec': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'faction': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.ChrFaction']"}),
-            'fine_by_value': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'standing_loss': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvType']"})
-        },
-        'eve_db.invflag': {
-            'Meta': {'ordering': "['id']", 'object_name': 'InvFlag'},
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'order': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'text': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'type_text': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'})
-        },
-        'eve_db.invgroup': {
-            'Meta': {'ordering': "['id']", 'object_name': 'InvGroup'},
-            'allow_anchoring': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'allow_manufacture': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'allow_recycle': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'category': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvCategory']", 'null': 'True', 'blank': 'True'}),
-            'description': ('django.db.models.fields.TextField', [], {}),
-            'icon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.EveIcon']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'is_anchored': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_fittable_non_singleton': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_published': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
-            'use_base_price': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
-        },
-        'eve_db.invmarketgroup': {
-            'Meta': {'ordering': "['id']", 'object_name': 'InvMarketGroup'},
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'has_items': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'icon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.EveIcon']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'parent': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvMarketGroup']", 'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.invmetagroup': {
-            'Meta': {'ordering': "['id']", 'object_name': 'InvMetaGroup'},
-            'description': ('django.db.models.fields.TextField', [], {}),
-            'icon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.EveIcon']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'})
-        },
-        'eve_db.invmetatype': {
-            'Meta': {'ordering': "['type']", 'object_name': 'InvMetaType'},
-            'meta_group': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvMetaGroup']"}),
-            'parent_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'inventorymetatype_parent_type_set'", 'to': "orm['eve_db.InvType']"}),
-            'type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'inventorymetatype_type_set'", 'unique': 'True', 'primary_key': 'True', 'to': "orm['eve_db.InvType']"})
-        },
-        'eve_db.invposresource': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('control_tower_type', 'resource_type'),)", 'object_name': 'InvPOSResource'},
-            'control_tower_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'tower_resource_set'", 'to': "orm['eve_db.InvType']"}),
-            'faction': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.ChrFaction']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'min_security_level': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'purpose': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvPOSResourcePurpose']", 'null': 'True', 'blank': 'True'}),
-            'quantity': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'resource_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'pos_resource_set'", 'to': "orm['eve_db.InvType']"})
-        },
-        'eve_db.invposresourcepurpose': {
-            'Meta': {'ordering': "['id']", 'object_name': 'InvPOSResourcePurpose'},
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'purpose': ('django.db.models.fields.CharField', [], {'max_length': '75', 'blank': 'True'})
-        },
-        'eve_db.invtype': {
-            'Meta': {'ordering': "['id']", 'object_name': 'InvType'},
-            'base_price': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'capacity': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'chance_of_duplicating': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'graphic': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.EveGraphic']", 'null': 'True', 'blank': 'True'}),
-            'group': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvGroup']", 'null': 'True', 'blank': 'True'}),
-            'icon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.EveIcon']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'is_published': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'market_group': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvMarketGroup']", 'null': 'True', 'blank': 'True'}),
-            'mass': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'portion_size': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'race': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.ChrRace']", 'null': 'True', 'blank': 'True'}),
-            'radius': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'volume': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.invtypematerial': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('type', 'material_type'),)", 'object_name': 'InvTypeMaterial'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'material_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'itemtype_set'", 'to': "orm['eve_db.InvType']"}),
-            'quantity': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'material_set'", 'to': "orm['eve_db.InvType']"})
-        },
-        'eve_db.invtypereaction': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('reaction_type', 'input', 'type'),)", 'object_name': 'InvTypeReaction'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'input': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'quantity': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'reaction_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'inventorytypereactions_reaction_type_set'", 'to': "orm['eve_db.InvType']"}),
-            'type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'inventorytypereactions_type_set'", 'to': "orm['eve_db.InvType']"})
-        },
-        'eve_db.mapcelestialstatistic': {
-            'Meta': {'ordering': "['celestial']", 'object_name': 'MapCelestialStatistic'},
-            'age': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'celestial': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.MapDenormalize']", 'unique': 'True', 'primary_key': 'True'}),
-            'density': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'eccentricity': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'escape_velocity': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'is_fragmented': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_locked': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'life': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'luminousity': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'mass': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'mass_dust': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'mass_gas': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'orbit_period': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'orbit_radius': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'pressure': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'radius': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'rotation_rate': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'spectral_class': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'surface_gravity': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'temperature': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.mapconstellation': {
-            'Meta': {'ordering': "['id']", 'object_name': 'MapConstellation'},
-            'faction': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.ChrFaction']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'radius': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'region': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.MapRegion']", 'null': 'True', 'blank': 'True'}),
-            'sovereignty_grace_start_time': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'sovereignty_start_time': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'x': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'x_max': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'x_min': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'y': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'y_max': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'y_min': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'z': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'z_min': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.mapconstellationjump': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('from_constellation', 'to_constellation'),)", 'object_name': 'MapConstellationJump'},
-            'from_constellation': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'constellation_jumps_from_constellation_set'", 'to': "orm['eve_db.MapConstellation']"}),
-            'from_region': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'constellation_jumps_from_region_set'", 'to': "orm['eve_db.MapRegion']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'to_constellation': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'constellation_jumps_to_constellation_set'", 'to': "orm['eve_db.MapConstellation']"}),
-            'to_region': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'constellation_jumps_to_region_set'", 'to': "orm['eve_db.MapRegion']"})
-        },
-        'eve_db.mapdenormalize': {
-            'Meta': {'ordering': "['id']", 'object_name': 'MapDenormalize'},
-            'celestial_index': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'constellation': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.MapConstellation']", 'null': 'True', 'blank': 'True'}),
-            'group': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvGroup']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'orbit_id': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'orbit_index': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'radius': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'region': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.MapRegion']", 'null': 'True', 'blank': 'True'}),
-            'security': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'solar_system': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.MapSolarSystem']", 'null': 'True', 'blank': 'True'}),
-            'type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvType']", 'null': 'True', 'blank': 'True'}),
-            'x': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'y': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'z': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.mapjump': {
-            'Meta': {'ordering': "['origin_gate']", 'object_name': 'MapJump'},
-            'destination_gate': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'stargate_jump_destination_set'", 'to': "orm['eve_db.MapDenormalize']"}),
-            'origin_gate': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'stargate_jump_origin_set'", 'unique': 'True', 'primary_key': 'True', 'to': "orm['eve_db.MapDenormalize']"})
-        },
-        'eve_db.maplandmark': {
-            'Meta': {'ordering': "['id']", 'object_name': 'MapLandmark'},
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'icon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.EveIcon']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'importance': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'radius': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'solar_system': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.MapSolarSystem']", 'null': 'True', 'blank': 'True'}),
-            'url_2d': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'x': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'y': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'z': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.mapregion': {
-            'Meta': {'ordering': "['id']", 'object_name': 'MapRegion'},
-            'faction': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.ChrFaction']", 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'radius': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'x': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'x_max': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'x_min': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'y': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'y_max': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'y_min': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'z': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'z_min': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.mapregionjump': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('from_region', 'to_region'),)", 'object_name': 'MapRegionJump'},
-            'from_region': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'region_jumps_from_region_set'", 'to': "orm['eve_db.MapRegion']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'to_region': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'region_jumps_to_region_set'", 'to': "orm['eve_db.MapRegion']"})
-        },
-        'eve_db.mapsolarsystem': {
-            'Meta': {'ordering': "['id']", 'object_name': 'MapSolarSystem'},
-            'constellation': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.MapConstellation']", 'null': 'True', 'blank': 'True'}),
-            'faction': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'solarsystem_set'", 'null': 'True', 'to': "orm['eve_db.ChrFaction']"}),
-            'has_interconstellational_link': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'has_interregional_link': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'is_border_system': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_corridor_system': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_fringe_system': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_hub_system': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_international': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'luminosity': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
-            'radius': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'region': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.MapRegion']", 'null': 'True', 'blank': 'True'}),
-            'security_class': ('django.db.models.fields.CharField', [], {'max_length': '5', 'blank': 'True'}),
-            'security_level': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'sovereignty_level': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'sovereignty_start_time': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'sun_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvType']", 'null': 'True', 'blank': 'True'}),
-            'x': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'x_max': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'x_min': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'y': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'y_max': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'y_min': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'z': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'z_min': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.mapsolarsystemjump': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('from_solar_system', 'to_solar_system'),)", 'object_name': 'MapSolarSystemJump'},
-            'from_constellation': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'solar_system_jumps_from_constellation_set'", 'null': 'True', 'to': "orm['eve_db.MapConstellation']"}),
-            'from_region': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'solar_system_jumps_from_region_set'", 'null': 'True', 'to': "orm['eve_db.MapRegion']"}),
-            'from_solar_system': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'solar_system_jumps_from_solar_system_set'", 'to': "orm['eve_db.MapSolarSystem']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'to_constellation': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'solar_system_jumps_to_constellation_set'", 'null': 'True', 'to': "orm['eve_db.MapConstellation']"}),
-            'to_region': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'solar_system_jumps_to_region_set'", 'null': 'True', 'to': "orm['eve_db.MapRegion']"}),
-            'to_solar_system': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'solar_system_jumps_to_solar_system_set'", 'to': "orm['eve_db.MapSolarSystem']"})
-        },
-        'eve_db.mapuniverse': {
-            'Meta': {'ordering': "['id']", 'object_name': 'MapUniverse'},
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'radius': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'x': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'x_max': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'x_min': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'y': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'y_max': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'y_min': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'z': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'z_min': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.planetschematic': {
-            'Meta': {'ordering': "['id']", 'object_name': 'PlanetSchematic'},
-            'cycle_time': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
-            'pin_map': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'usable_schematics'", 'symmetrical': 'False', 'through': "orm['eve_db.PlanetSchematicsPinMap']", 'to': "orm['eve_db.InvType']"}),
-            'type_map': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'used_with_schematic'", 'symmetrical': 'False', 'through': "orm['eve_db.PlanetSchematicsTypeMap']", 'to': "orm['eve_db.InvType']"})
-        },
-        'eve_db.planetschematicspinmap': {
-            'Meta': {'ordering': "['schematic', 'type']", 'unique_together': "(('schematic', 'type'),)", 'object_name': 'PlanetSchematicsPinMap'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'schematic': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.PlanetSchematic']"}),
-            'type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvType']"})
-        },
-        'eve_db.planetschematicstypemap': {
-            'Meta': {'ordering': "['schematic', 'is_input', 'type']", 'unique_together': "(('schematic', 'type'),)", 'object_name': 'PlanetSchematicsTypeMap'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_input': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'quantity': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'schematic': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.PlanetSchematic']"}),
-            'type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvType']"})
-        },
-        'eve_db.ramactivity': {
-            'Meta': {'ordering': "['id']", 'object_name': 'RamActivity'},
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'icon_filename': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'is_published': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '75', 'blank': 'True'})
-        },
-        'eve_db.ramassemblyline': {
-            'Meta': {'ordering': "['id']", 'object_name': 'RamAssemblyLine'},
-            'activity': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.RamActivity']", 'null': 'True', 'blank': 'True'}),
-            'assembly_line_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.RamAssemblyLineType']", 'null': 'True', 'blank': 'True'}),
-            'cost_install': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'cost_per_hour': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'discount_per_good_standing_point': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'maximum_char_security': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'maximum_corp_security': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'minimum_char_security': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'minimum_corp_security': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'minimum_standing': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.CrpNPCCorporation']", 'null': 'True', 'blank': 'True'}),
-            'station': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.StaStation']", 'null': 'True', 'blank': 'True'}),
-            'surcharge_per_bad_standing_point': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'ui_grouping_id': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.ramassemblylinestations': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('station', 'assembly_line_type'),)", 'object_name': 'RamAssemblyLineStations'},
-            'assembly_line_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.RamAssemblyLineType']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.CrpNPCCorporation']", 'null': 'True', 'blank': 'True'}),
-            'quantity': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'region': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.MapRegion']", 'null': 'True', 'blank': 'True'}),
-            'solar_system': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.MapSolarSystem']", 'null': 'True', 'blank': 'True'}),
-            'station': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.StaStation']"}),
-            'station_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.StaStationType']", 'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.ramassemblylinetype': {
-            'Meta': {'ordering': "['id']", 'object_name': 'RamAssemblyLineType'},
-            'activity': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.RamActivity']", 'null': 'True', 'blank': 'True'}),
-            'base_material_multiplier': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'base_time_multiplier': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'min_cost_per_hour': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'volume': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.ramassemblylinetypedetailpercategory': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('assembly_line_type', 'category'),)", 'object_name': 'RamAssemblyLineTypeDetailPerCategory'},
-            'assembly_line_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.RamAssemblyLineType']"}),
-            'category': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvCategory']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'material_multiplier': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'time_multiplier': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.ramassemblylinetypedetailpergroup': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('assembly_line_type', 'group'),)", 'object_name': 'RamAssemblyLineTypeDetailPerGroup'},
-            'assembly_line_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.RamAssemblyLineType']"}),
-            'group': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.InvGroup']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'material_multiplier': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'time_multiplier': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.ramtyperequirement': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('type', 'activity_type', 'required_type'),)", 'object_name': 'RamTypeRequirement'},
-            'activity_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.RamActivity']"}),
-            'damage_per_job': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'quantity': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'recycle': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'required_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'required_type'", 'to': "orm['eve_db.InvType']"}),
-            'type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'type_requirement'", 'to': "orm['eve_db.InvType']"})
-        },
-        'eve_db.staoperation': {
-            'Meta': {'ordering': "['id']", 'object_name': 'StaOperation'},
-            'activity_id': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'amarr_station_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'amarr_station_operation_set'", 'null': 'True', 'to': "orm['eve_db.StaStationType']"}),
-            'border': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'caldari_station_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'caldari_station_operation_set'", 'null': 'True', 'to': "orm['eve_db.StaStationType']"}),
-            'corridor': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'fringe': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'gallente_station_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'gallente_station_operation_set'", 'null': 'True', 'to': "orm['eve_db.StaStationType']"}),
-            'hub': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'jove_station_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'jove_station_operation_set'", 'null': 'True', 'to': "orm['eve_db.StaStationType']"}),
-            'minmatar_station_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'minmatar_station_operation_set'", 'null': 'True', 'to': "orm['eve_db.StaStationType']"}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'ratio': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.staoperationservices': {
-            'Meta': {'ordering': "['id']", 'unique_together': "(('operation', 'service'),)", 'object_name': 'StaOperationServices'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'operation': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.StaOperation']"}),
-            'service': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.StaService']"})
-        },
-        'eve_db.staservice': {
-            'Meta': {'ordering': "['id']", 'object_name': 'StaService'},
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        'eve_db.stastation': {
-            'Meta': {'ordering': "['id']", 'object_name': 'StaStation'},
-            'constellation': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.MapConstellation']", 'null': 'True', 'blank': 'True'}),
-            'corporation': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.CrpNPCCorporation']", 'null': 'True', 'blank': 'True'}),
-            'docking_cost_per_volume': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'max_ship_volume_dockable': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'office_rental_cost': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'operation': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.StaOperation']", 'null': 'True', 'blank': 'True'}),
-            'region': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.MapRegion']", 'null': 'True', 'blank': 'True'}),
-            'reprocessing_efficiency': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'reprocessing_hangar_flag': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'reprocessing_stations_take': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'security': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'solar_system': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.MapSolarSystem']", 'null': 'True', 'blank': 'True'}),
-            'type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.StaStationType']", 'null': 'True', 'blank': 'True'}),
-            'x': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'y': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'z': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'eve_db.stastationtype': {
-            'Meta': {'ordering': "['id']", 'object_name': 'StaStationType'},
-            'dock_entry_x': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'dock_entry_y': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'dock_entry_z': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'dock_orientation_x': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'dock_orientation_y': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'dock_orientation_z': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'docking_bay_graphic': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'docking_bay_graphic'", 'null': 'True', 'to': "orm['eve_db.EveGraphic']"}),
-            'hangar_graphic': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'hangar_graphic'", 'null': 'True', 'to': "orm['eve_db.EveGraphic']"}),
-            'id': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'primary_key': 'True'}),
-            'is_conquerable': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'office_slots': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'operation': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['eve_db.StaOperation']", 'null': 'True', 'blank': 'True'}),
-            'reprocessing_efficiency': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'})
-        }
-    }
-
-    complete_apps = ['eve_db']
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+import caching.base
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+    ]
+
+    operations = [
+        migrations.CreateModel(
+            name='AgtAgent',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=255, blank=True)),
+                ('level', models.IntegerField(null=True, blank=True)),
+                ('quality', models.IntegerField(null=True, blank=True)),
+                ('locator', models.BooleanField(default=False)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Agent',
+                'verbose_name_plural': 'Agents',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='AgtAgentType',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=255)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Agent Type',
+                'verbose_name_plural': 'Agent Types',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='AgtResearchAgent',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('agent', models.ForeignKey(to='eve_db.AgtAgent')),
+            ],
+            options={
+                'ordering': ['agent'],
+                'verbose_name': 'Research Agent',
+                'verbose_name_plural': 'Research Agents',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='ChrAncestry',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=255, blank=True)),
+                ('description', models.TextField(blank=True)),
+                ('perception_bonus', models.IntegerField(default=0)),
+                ('willpower_bonus', models.IntegerField(default=0)),
+                ('charisma_bonus', models.IntegerField(default=0)),
+                ('memory_bonus', models.IntegerField(default=0)),
+                ('intelligence_bonus', models.IntegerField(default=0)),
+                ('icon_id', models.IntegerField(null=True, blank=True)),
+                ('short_description', models.TextField(blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Ancestry',
+                'verbose_name_plural': 'Ancestries',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='ChrAttribute',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=255, blank=True)),
+                ('description', models.TextField(blank=True)),
+                ('short_description', models.TextField(blank=True)),
+                ('notes', models.TextField(blank=True)),
+                ('icon_id', models.IntegerField(null=True, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Character Attribute',
+                'verbose_name_plural': 'Character Attributes',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='ChrBloodline',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=255, blank=True)),
+                ('description', models.TextField(blank=True)),
+                ('male_description', models.TextField(blank=True)),
+                ('female_description', models.TextField(blank=True)),
+                ('starting_perception', models.IntegerField(default=0)),
+                ('starting_willpower', models.IntegerField(default=0)),
+                ('starting_charisma', models.IntegerField(default=0)),
+                ('starting_memory', models.IntegerField(default=0)),
+                ('starting_intelligence', models.IntegerField(default=0)),
+                ('icon_id', models.IntegerField(null=True, blank=True)),
+                ('short_description', models.TextField(blank=True)),
+                ('short_male_description', models.TextField(blank=True)),
+                ('short_female_description', models.TextField(blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Bloodline',
+                'verbose_name_plural': 'Bloodlines',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='ChrFaction',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=255, blank=True)),
+                ('description', models.TextField(blank=True)),
+                ('size_factor', models.FloatField(null=True, blank=True)),
+                ('station_count', models.IntegerField(default=0)),
+                ('station_system_count', models.IntegerField(default=0)),
+                ('icon_id', models.IntegerField(null=True, blank=True)),
+                ('races', models.IntegerField(default=0)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Faction',
+                'verbose_name_plural': 'Factions',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='ChrRace',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=30)),
+                ('short_description', models.TextField(blank=True)),
+                ('description', models.TextField(blank=True)),
+                ('icon_id', models.IntegerField(null=True, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Race',
+                'verbose_name_plural': 'Races',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='CrpActivity',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=100)),
+                ('description', models.TextField(blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Corporate Activity',
+                'verbose_name_plural': 'Corporate Activities',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='CrpNPCCorporation',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=255, blank=True)),
+                ('description', models.TextField(blank=True)),
+                ('size', models.CharField(blank=True, max_length=1, choices=[(b'H', b'Huge'), (b'L', b'Large'), (b'M', b'Medium'), (b'S', b'Small'), (b'T', b'Tiny')])),
+                ('extent', models.CharField(blank=True, max_length=1, choices=[(b'G', b'Global'), (b'N', b'National'), (b'R', b'Regional'), (b'C', b'Constellational'), (b'L', b'Local')])),
+                ('investor1_shares', models.IntegerField(null=True, blank=True)),
+                ('investor2_shares', models.IntegerField(null=True, blank=True)),
+                ('investor3_shares', models.IntegerField(null=True, blank=True)),
+                ('investor4_shares', models.IntegerField(null=True, blank=True)),
+                ('public_share_percent', models.FloatField(null=True, blank=True)),
+                ('initial_share_price', models.IntegerField(null=True, blank=True)),
+                ('min_security', models.FloatField(null=True, blank=True)),
+                ('stations_are_scattered', models.BooleanField(default=False)),
+                ('fringe_systems', models.IntegerField(default=0)),
+                ('corridor_systems', models.IntegerField(default=0)),
+                ('hub_systems', models.IntegerField(default=0)),
+                ('border_systems', models.IntegerField(default=0)),
+                ('size_factor', models.FloatField(null=True, blank=True)),
+                ('station_count', models.IntegerField(default=0, null=True, blank=True)),
+                ('station_system_count', models.IntegerField(default=0, null=True, blank=True)),
+                ('icon_id', models.IntegerField(null=True, blank=True)),
+                ('enemy_corp', models.ForeignKey(related_name='enemy_of_set', blank=True, to='eve_db.CrpNPCCorporation', null=True)),
+                ('faction', models.ForeignKey(blank=True, to='eve_db.ChrFaction', null=True)),
+                ('friendly_corp', models.ForeignKey(related_name='friendly_with_set', blank=True, to='eve_db.CrpNPCCorporation', null=True)),
+                ('investor1', models.ForeignKey(related_name='invested1_set', blank=True, to='eve_db.CrpNPCCorporation', null=True)),
+                ('investor2', models.ForeignKey(related_name='invested2_set', blank=True, to='eve_db.CrpNPCCorporation', null=True)),
+                ('investor3', models.ForeignKey(related_name='invested3_set', blank=True, to='eve_db.CrpNPCCorporation', null=True)),
+                ('investor4', models.ForeignKey(related_name='invested4_set', blank=True, to='eve_db.CrpNPCCorporation', null=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'NPC Corporation',
+                'verbose_name_plural': 'NPC Corporations',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='CrpNPCCorporationDivision',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('size', models.IntegerField(null=True, blank=True)),
+                ('corporation', models.ForeignKey(to='eve_db.CrpNPCCorporation')),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'NPC Corporation Division',
+                'verbose_name_plural': 'NPC Corporation Divisions',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='CrpNPCCorporationResearchField',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('corporation', models.ForeignKey(to='eve_db.CrpNPCCorporation')),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'NPC Corporation Research Field',
+                'verbose_name_plural': 'NPC Corporation Research Fields',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='CrpNPCCorporationTrade',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('corporation', models.ForeignKey(to='eve_db.CrpNPCCorporation')),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'NPC Corporation Trade',
+                'verbose_name_plural': 'NPC Corporation Trades',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='CrpNPCDivision',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=100, blank=True)),
+                ('description', models.TextField(blank=True)),
+                ('leader_type', models.CharField(max_length=100, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'NPC Division',
+                'verbose_name_plural': 'NPC Divisions',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='DgmAttributeCategory',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=50)),
+                ('description', models.CharField(max_length=255, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Inventory Attribute Category',
+                'verbose_name_plural': 'Inventory Attribute Categories',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='DgmAttributeType',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=75)),
+                ('description', models.TextField(blank=True)),
+                ('icon_id', models.IntegerField(null=True, blank=True)),
+                ('default_value', models.IntegerField(null=True, blank=True)),
+                ('is_published', models.BooleanField(default=False)),
+                ('display_name', models.CharField(max_length=100, blank=True)),
+                ('is_stackable', models.BooleanField(default=False)),
+                ('high_is_good', models.BooleanField(default=True)),
+                ('category', models.ForeignKey(blank=True, to='eve_db.DgmAttributeCategory', null=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Inventory Attribute Type',
+                'verbose_name_plural': 'Inventory Attribute Types',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='DgmEffect',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=150)),
+                ('category', models.IntegerField(null=True, blank=True)),
+                ('pre_expression', models.IntegerField(null=True, blank=True)),
+                ('post_expression', models.IntegerField(null=True, blank=True)),
+                ('description', models.TextField(blank=True)),
+                ('guid', models.CharField(max_length=255, blank=True)),
+                ('icon_id', models.IntegerField(null=True, blank=True)),
+                ('is_offensive', models.BooleanField(default=False)),
+                ('is_assistance', models.BooleanField(default=False)),
+                ('disallow_auto_repeat', models.BooleanField(default=False)),
+                ('is_published', models.BooleanField(default=False)),
+                ('display_name', models.CharField(max_length=255, blank=True)),
+                ('is_warp_safe', models.BooleanField(default=False)),
+                ('has_range_chance', models.BooleanField(default=False)),
+                ('has_electronic_chance', models.BooleanField(default=False)),
+                ('has_propulsion_chance', models.BooleanField(default=False)),
+                ('distribution', models.IntegerField(null=True, blank=True)),
+                ('sfx_name', models.CharField(max_length=100, blank=True)),
+                ('discharge_attribute', models.ForeignKey(related_name='inventoryeffectdischargeattribute', blank=True, to='eve_db.DgmAttributeType', null=True)),
+                ('duration_attribute', models.ForeignKey(related_name='inventoryeffectdurationeattribute', blank=True, to='eve_db.DgmAttributeType', null=True)),
+                ('falloff_attribute', models.ForeignKey(related_name='inventoryeffectfalloffattribute', blank=True, to='eve_db.DgmAttributeType', null=True)),
+                ('fitting_usage_chance_attribute', models.ForeignKey(related_name='inventoryeffectfittingusagechanceattribute', blank=True, to='eve_db.DgmAttributeType', null=True)),
+                ('npc_activation_chance_attribute', models.ForeignKey(related_name='inventoryeffectnpcactivationchanceattribute', blank=True, to='eve_db.DgmAttributeType', null=True)),
+                ('npc_usage_chance_attribute', models.ForeignKey(related_name='inventoryeffectnpcusagechanceattribute', blank=True, to='eve_db.DgmAttributeType', null=True)),
+                ('range_attribute', models.ForeignKey(related_name='inventoryeffectrangeattribute', blank=True, to='eve_db.DgmAttributeType', null=True)),
+                ('tracking_speed_attribute', models.ForeignKey(related_name='inventoryeffecttrackingspeedattribute', blank=True, to='eve_db.DgmAttributeType', null=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Inventory Effect',
+                'verbose_name_plural': 'Inventory Effects',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='DgmTypeAttribute',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('value_int', models.IntegerField(null=True, blank=True)),
+                ('value_float', models.FloatField(null=True, blank=True)),
+                ('attribute', models.ForeignKey(to='eve_db.DgmAttributeType')),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Inventory Type Attribute',
+                'verbose_name_plural': 'Inventory Type Attributes',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='DgmTypeEffect',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('is_default', models.BooleanField(default=False)),
+                ('effect', models.ForeignKey(to='eve_db.DgmEffect')),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Inventory Type Effect',
+                'verbose_name_plural': 'Inventory Type Effect',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='EveUnit',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=75)),
+                ('display_name', models.CharField(max_length=30, blank=True)),
+                ('description', models.CharField(max_length=100, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Unit',
+                'verbose_name_plural': 'Units',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='InvCategory',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=50)),
+                ('description', models.CharField(max_length=255)),
+                ('is_published', models.BooleanField(default=True)),
+                ('icon_id', models.IntegerField(null=True, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Inventory Category',
+                'verbose_name_plural': 'Inventory Categories',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='InvContrabandType',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('standing_loss', models.FloatField(null=True, blank=True)),
+                ('confiscate_min_sec', models.FloatField(null=True, blank=True)),
+                ('fine_by_value', models.FloatField(null=True, blank=True)),
+                ('attack_min_sec', models.FloatField(null=True, blank=True)),
+                ('faction', models.ForeignKey(to='eve_db.ChrFaction')),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Contraband',
+                'verbose_name_plural': 'Contraband',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='InvFlag',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=255)),
+                ('text', models.CharField(max_length=255, blank=True)),
+                ('order', models.IntegerField(null=True, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Inventory Flag',
+                'verbose_name_plural': 'Inventory Flags',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='InvGroup',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=150)),
+                ('description', models.TextField()),
+                ('icon_id', models.IntegerField(null=True, blank=True)),
+                ('use_base_price', models.BooleanField(default=False)),
+                ('allow_manufacture', models.BooleanField(default=True)),
+                ('allow_recycle', models.BooleanField(default=True)),
+                ('allow_anchoring', models.BooleanField(default=False)),
+                ('is_anchored', models.BooleanField(default=False)),
+                ('is_fittable_non_singleton', models.BooleanField(default=False)),
+                ('is_published', models.BooleanField(default=False)),
+                ('category', models.ForeignKey(blank=True, to='eve_db.InvCategory', null=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Inventory Group',
+                'verbose_name_plural': 'Inventory Groups',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='InvItem',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('owner', models.IntegerField(null=True)),
+                ('location', models.IntegerField(null=True)),
+                ('quantity', models.IntegerField()),
+                ('flag', models.ForeignKey(to='eve_db.InvFlag')),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Item',
+                'verbose_name_plural': 'Items',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='InvMarketGroup',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=50)),
+                ('description', models.CharField(max_length=300012, null=True, blank=True)),
+                ('has_items', models.BooleanField(default=True)),
+                ('icon_id', models.IntegerField(null=True, blank=True)),
+                ('parent', models.ForeignKey(blank=True, to='eve_db.InvMarketGroup', null=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Market Group',
+                'verbose_name_plural': 'Market Groups',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='InvMetaGroup',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=255)),
+                ('description', models.TextField(blank=True)),
+                ('icon_id', models.IntegerField(null=True, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Inventory Meta Group',
+                'verbose_name_plural': 'Inventory Meta Groups',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='InvName',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=255, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Name',
+                'verbose_name_plural': 'Names',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='InvPosition',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('x', models.FloatField(null=True)),
+                ('y', models.FloatField(null=True)),
+                ('z', models.FloatField(null=True)),
+                ('yaw', models.FloatField(null=True)),
+                ('pitch', models.FloatField(null=True)),
+                ('roll', models.FloatField(null=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Position',
+                'verbose_name_plural': 'Positions',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='InvPOSResource',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('quantity', models.IntegerField(null=True, blank=True)),
+                ('min_security_level', models.IntegerField(null=True, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'POS Resource',
+                'verbose_name_plural': 'POS Resources',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='InvPOSResourcePurpose',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('purpose', models.CharField(max_length=75, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'POS Resource Purpose',
+                'verbose_name_plural': 'POS Resource Purposes',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='InvType',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=100, blank=True)),
+                ('description', models.TextField(blank=True)),
+                ('mass', models.FloatField(null=True, blank=True)),
+                ('volume', models.FloatField(null=True, blank=True)),
+                ('capacity', models.FloatField(null=True, blank=True)),
+                ('portion_size', models.IntegerField(null=True, blank=True)),
+                ('base_price', models.FloatField(null=True, blank=True)),
+                ('is_published', models.BooleanField(default=False)),
+                ('chance_of_duplicating', models.FloatField(null=True, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Inventory Type',
+                'verbose_name_plural': 'Inventory Types',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='InvTypeMaterial',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('quantity', models.IntegerField(default=0)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Inventory Type Material',
+                'verbose_name_plural': 'Inventory Type Materials',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='InvTypeReaction',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('input', models.IntegerField(blank=True, null=True, choices=[(0, b'Result of reaction'), (1, b'Reaction material')])),
+                ('quantity', models.IntegerField(null=True, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Inventory Type Reaction',
+                'verbose_name_plural': 'Inventory Type Reactions',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='InvUniqueName',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=100)),
+                ('group', models.ForeignKey(to='eve_db.InvGroup')),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Position',
+                'verbose_name_plural': 'Positions',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='MapConstellation',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=255, blank=True)),
+                ('x_min', models.FloatField(null=True, blank=True)),
+                ('x_max', models.FloatField(null=True, blank=True)),
+                ('y', models.FloatField(null=True, blank=True)),
+                ('y_min', models.FloatField(null=True, blank=True)),
+                ('y_max', models.FloatField(null=True, blank=True)),
+                ('z', models.FloatField(null=True, blank=True)),
+                ('z_min', models.FloatField(null=True, blank=True)),
+                ('z_max', models.FloatField(null=True, blank=True)),
+                ('x', models.FloatField(null=True, blank=True)),
+                ('radius', models.FloatField(null=True, blank=True)),
+                ('sovereignty_start_time', models.DateTimeField(null=True, blank=True)),
+                ('sovereignty_grace_start_time', models.DateTimeField(null=True, blank=True)),
+                ('faction', models.ForeignKey(blank=True, to='eve_db.ChrFaction', null=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Constellation',
+                'verbose_name_plural': 'Constellations',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='MapConstellationJump',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('from_constellation', models.ForeignKey(related_name='constellation_jumps_from_constellation_set', to='eve_db.MapConstellation')),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Constellation Jump',
+                'verbose_name_plural': 'Constellation Jumps',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='MapDenormalize',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('orbit_id', models.IntegerField(null=True, blank=True)),
+                ('x', models.FloatField(null=True, blank=True)),
+                ('y', models.FloatField(null=True, blank=True)),
+                ('z', models.FloatField(null=True, blank=True)),
+                ('radius', models.FloatField(null=True, blank=True)),
+                ('name', models.CharField(max_length=100, null=True, blank=True)),
+                ('security', models.FloatField(null=True, blank=True)),
+                ('celestial_index', models.IntegerField(null=True, blank=True)),
+                ('orbit_index', models.IntegerField(null=True, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Denormalize',
+                'verbose_name_plural': 'Denormalizations',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='MapLandmark',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=255, blank=True)),
+                ('description', models.TextField(blank=True)),
+                ('x', models.FloatField(null=True, blank=True)),
+                ('y', models.FloatField(null=True, blank=True)),
+                ('z', models.FloatField(null=True, blank=True)),
+                ('icon_id', models.IntegerField(null=True, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Landmark',
+                'verbose_name_plural': 'Landmarks',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='MapLocationScene',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('graphic', models.IntegerField(null=True, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Location Scene',
+                'verbose_name_plural': 'Location Scenes',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='MapRegion',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=255, blank=True)),
+                ('x_min', models.FloatField(null=True, blank=True)),
+                ('x_max', models.FloatField(null=True, blank=True)),
+                ('y', models.FloatField(null=True, blank=True)),
+                ('y_min', models.FloatField(null=True, blank=True)),
+                ('y_max', models.FloatField(null=True, blank=True)),
+                ('z', models.FloatField(null=True, blank=True)),
+                ('z_min', models.FloatField(null=True, blank=True)),
+                ('z_max', models.FloatField(null=True, blank=True)),
+                ('x', models.FloatField(null=True, blank=True)),
+                ('radius', models.FloatField(null=True, blank=True)),
+                ('faction', models.ForeignKey(blank=True, to='eve_db.ChrFaction', null=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Region',
+                'verbose_name_plural': 'Regions',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='MapRegionJump',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('from_region', models.ForeignKey(related_name='region_jumps_from_region_set', to='eve_db.MapRegion')),
+                ('to_region', models.ForeignKey(related_name='region_jumps_to_region_set', to='eve_db.MapRegion')),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Region Jump',
+                'verbose_name_plural': 'Region Jumps',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='MapSolarSystem',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=255, null=True, blank=True)),
+                ('x', models.FloatField(null=True, blank=True)),
+                ('x_min', models.FloatField(null=True, blank=True)),
+                ('x_max', models.FloatField(null=True, blank=True)),
+                ('y', models.FloatField(null=True, blank=True)),
+                ('y_min', models.FloatField(null=True, blank=True)),
+                ('y_max', models.FloatField(null=True, blank=True)),
+                ('z', models.FloatField(null=True, blank=True)),
+                ('z_min', models.FloatField(null=True, blank=True)),
+                ('z_max', models.FloatField(null=True, blank=True)),
+                ('luminosity', models.FloatField(null=True, blank=True)),
+                ('is_border_system', models.BooleanField(default=False)),
+                ('is_fringe_system', models.BooleanField(default=False)),
+                ('is_corridor_system', models.BooleanField(default=False)),
+                ('is_hub_system', models.BooleanField(default=False)),
+                ('is_international', models.BooleanField(default=False)),
+                ('has_interregional_link', models.BooleanField(default=False)),
+                ('has_interconstellational_link', models.BooleanField(default=False)),
+                ('security_level', models.FloatField(null=True, blank=True)),
+                ('radius', models.FloatField(null=True, blank=True)),
+                ('security_class', models.CharField(max_length=5, blank=True)),
+                ('sovereignty_level', models.IntegerField(null=True, blank=True)),
+                ('sovereignty_start_time', models.DateTimeField(null=True, blank=True)),
+                ('constellation', models.ForeignKey(blank=True, to='eve_db.MapConstellation', null=True)),
+                ('faction', models.ForeignKey(related_name='solarsystem_set', blank=True, to='eve_db.ChrFaction', null=True)),
+                ('region', models.ForeignKey(blank=True, to='eve_db.MapRegion', null=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Solar System',
+                'verbose_name_plural': 'Solar Systems',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='MapSolarSystemJump',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('from_constellation', models.ForeignKey(related_name='solar_system_jumps_from_constellation_set', blank=True, to='eve_db.MapConstellation', null=True)),
+                ('from_region', models.ForeignKey(related_name='solar_system_jumps_from_region_set', blank=True, to='eve_db.MapRegion', null=True)),
+                ('from_solar_system', models.ForeignKey(related_name='solar_system_jumps_from_solar_system_set', to='eve_db.MapSolarSystem')),
+                ('to_constellation', models.ForeignKey(related_name='solar_system_jumps_to_constellation_set', blank=True, to='eve_db.MapConstellation', null=True)),
+                ('to_region', models.ForeignKey(related_name='solar_system_jumps_to_region_set', blank=True, to='eve_db.MapRegion', null=True)),
+                ('to_solar_system', models.ForeignKey(related_name='solar_system_jumps_to_solar_system_set', to='eve_db.MapSolarSystem')),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Solar System Jump',
+                'verbose_name_plural': 'Solar System Jumps',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='MapUniverse',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=255, blank=True)),
+                ('x_min', models.FloatField(null=True, blank=True)),
+                ('x_max', models.FloatField(null=True, blank=True)),
+                ('y', models.FloatField(null=True, blank=True)),
+                ('y_min', models.FloatField(null=True, blank=True)),
+                ('y_max', models.FloatField(null=True, blank=True)),
+                ('z', models.FloatField(null=True, blank=True)),
+                ('z_min', models.FloatField(null=True, blank=True)),
+                ('z_max', models.FloatField(null=True, blank=True)),
+                ('x', models.FloatField(null=True, blank=True)),
+                ('radius', models.FloatField(null=True, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Universe',
+                'verbose_name_plural': 'Universes',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='PlanetSchematic',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=255, null=True, blank=True)),
+                ('cycle_time', models.IntegerField(null=True, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Planet Schematic',
+                'verbose_name_plural': 'Planet Schematics',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='PlanetSchematicsPinMap',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('schematic', models.ForeignKey(to='eve_db.PlanetSchematic')),
+            ],
+            options={
+                'ordering': ['schematic', 'type'],
+                'verbose_name': 'Planet Schematic Pin Map',
+                'verbose_name_plural': 'Planet Schematic Pin Maps',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='PlanetSchematicsTypeMap',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('quantity', models.IntegerField(null=True, blank=True)),
+                ('is_input', models.BooleanField()),
+                ('schematic', models.ForeignKey(to='eve_db.PlanetSchematic')),
+            ],
+            options={
+                'ordering': ['schematic', 'is_input', 'type'],
+                'verbose_name': 'Planet Schematic Type Map',
+                'verbose_name_plural': 'Planet Schematic Type Maps',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='RamActivity',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=75, blank=True)),
+                ('description', models.CharField(max_length=100, blank=True)),
+                ('icon_filename', models.CharField(max_length=50, null=True, blank=True)),
+                ('is_published', models.BooleanField(default=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Research and Mfg activity',
+                'verbose_name_plural': 'Research and Mfg activities',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='RamAssemblyLineStations',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('quantity', models.IntegerField(null=True, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Assembly Line Station',
+                'verbose_name_plural': 'Assembly Line Stations',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='RamAssemblyLineType',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=100, blank=True)),
+                ('description', models.TextField(blank=True)),
+                ('base_time_multiplier', models.FloatField(null=True, blank=True)),
+                ('base_cost_multiplier', models.FloatField(null=True, blank=True)),
+                ('base_material_multiplier', models.FloatField(null=True, blank=True)),
+                ('volume', models.FloatField(null=True, blank=True)),
+                ('min_cost_per_hour', models.FloatField(null=True, blank=True)),
+                ('activity', models.ForeignKey(blank=True, to='eve_db.RamActivity', null=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Assembly Line Type',
+                'verbose_name_plural': 'Assembly Line Types',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='RamAssemblyLineTypeDetailPerCategory',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('time_multiplier', models.FloatField(null=True, blank=True)),
+                ('cost_multiplier', models.FloatField(null=True, blank=True)),
+                ('material_multiplier', models.FloatField(null=True, blank=True)),
+                ('assembly_line_type', models.ForeignKey(to='eve_db.RamAssemblyLineType')),
+                ('category', models.ForeignKey(to='eve_db.InvCategory')),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Assembly Line Detail per Category',
+                'verbose_name_plural': 'Assembly Line Details per Category',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='RamAssemblyLineTypeDetailPerGroup',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('time_multiplier', models.FloatField(null=True, blank=True)),
+                ('cost_multiplier', models.FloatField(null=True, blank=True)),
+                ('material_multiplier', models.FloatField(null=True, blank=True)),
+                ('assembly_line_type', models.ForeignKey(to='eve_db.RamAssemblyLineType')),
+                ('group', models.ForeignKey(to='eve_db.InvGroup')),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Assembly Line Detail per Group',
+                'verbose_name_plural': 'Assembly Line Details per Group',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='RamInstallationTypeContent',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('quantity', models.IntegerField(null=True)),
+                ('assembly_line_type', models.ForeignKey(to='eve_db.RamAssemblyLineType')),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Installation Type',
+                'verbose_name_plural': 'Installation Types',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='StaOperation',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('activity_id', models.IntegerField(null=True, blank=True)),
+                ('name', models.CharField(max_length=255, blank=True)),
+                ('description', models.TextField(blank=True)),
+                ('fringe', models.IntegerField(null=True, blank=True)),
+                ('corridor', models.IntegerField(null=True, blank=True)),
+                ('hub', models.IntegerField(null=True, blank=True)),
+                ('border', models.IntegerField(null=True, blank=True)),
+                ('ratio', models.IntegerField(null=True, blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Station Operation',
+                'verbose_name_plural': 'Station Operations',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='StaOperationServices',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('operation', models.ForeignKey(to='eve_db.StaOperation')),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Station Operation Service',
+                'verbose_name_plural': 'Station Operation Services',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='StaService',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=100)),
+                ('description', models.TextField(blank=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Station Service',
+                'verbose_name_plural': 'Station Services',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='StaStation',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('security', models.IntegerField(null=True, blank=True)),
+                ('docking_cost_per_volume', models.FloatField(null=True, blank=True)),
+                ('max_ship_volume_dockable', models.FloatField(null=True, blank=True)),
+                ('office_rental_cost', models.IntegerField(null=True, blank=True)),
+                ('name', models.CharField(max_length=100, blank=True)),
+                ('x', models.FloatField(null=True, blank=True)),
+                ('y', models.FloatField(null=True, blank=True)),
+                ('z', models.FloatField(null=True, blank=True)),
+                ('reprocessing_efficiency', models.FloatField(null=True, blank=True)),
+                ('reprocessing_stations_take', models.FloatField(null=True, blank=True)),
+                ('reprocessing_hangar_flag', models.IntegerField(null=True, blank=True)),
+                ('constellation', models.ForeignKey(blank=True, to='eve_db.MapConstellation', null=True)),
+                ('corporation', models.ForeignKey(blank=True, to='eve_db.CrpNPCCorporation', null=True)),
+                ('operation', models.ForeignKey(blank=True, to='eve_db.StaOperation', null=True)),
+                ('region', models.ForeignKey(blank=True, to='eve_db.MapRegion', null=True)),
+                ('solar_system', models.ForeignKey(blank=True, to='eve_db.MapSolarSystem', null=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Station',
+                'verbose_name_plural': 'Stations',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='StaStationType',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('dock_entry_x', models.FloatField(null=True, blank=True)),
+                ('dock_orientation_x', models.FloatField(null=True, blank=True)),
+                ('dock_entry_y', models.FloatField(null=True, blank=True)),
+                ('dock_orientation_y', models.FloatField(null=True, blank=True)),
+                ('dock_entry_z', models.FloatField(null=True, blank=True)),
+                ('dock_orientation_z', models.FloatField(null=True, blank=True)),
+                ('office_slots', models.IntegerField(null=True, blank=True)),
+                ('reprocessing_efficiency', models.FloatField(null=True, blank=True)),
+                ('is_conquerable', models.BooleanField(default=False)),
+                ('operation', models.ForeignKey(blank=True, to='eve_db.StaOperation', null=True)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Station Type',
+                'verbose_name_plural': 'Station Types',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='WarCombatZone',
+            fields=[
+                ('id', models.IntegerField(unique=True, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=255, blank=True)),
+                ('description', models.TextField(blank=True)),
+                ('center_system', models.ForeignKey(to='eve_db.MapSolarSystem')),
+                ('faction', models.ForeignKey(to='eve_db.ChrFaction')),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Combat Zone',
+                'verbose_name_plural': 'Combat Zones',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='WarCombatZoneSystem',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('combat_zone', models.ForeignKey(blank=True, to='eve_db.WarCombatZone', max_length=255)),
+                ('solar_system', models.ForeignKey(blank=True, to='eve_db.MapSolarSystem', max_length=255)),
+            ],
+            options={
+                'ordering': ['id'],
+                'verbose_name': 'Combat Zone System',
+                'verbose_name_plural': 'Combat Zone Systems',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='InvMetaType',
+            fields=[
+                ('type', models.ForeignKey(related_name='inventorymetatype_type_set', primary_key=True, serialize=False, to='eve_db.InvType', unique=True)),
+                ('meta_group', models.ForeignKey(to='eve_db.InvMetaGroup')),
+            ],
+            options={
+                'ordering': ['type'],
+                'verbose_name': 'Inventory Meta Type',
+                'verbose_name_plural': 'Inventory Meta Types',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='MapCelestialStatistic',
+            fields=[
+                ('celestial', models.ForeignKey(primary_key=True, serialize=False, to='eve_db.MapDenormalize', unique=True)),
+                ('temperature', models.FloatField(null=True, blank=True)),
+                ('spectral_class', models.CharField(max_length=255, blank=True)),
+                ('luminosity', models.FloatField(null=True, blank=True)),
+                ('age', models.FloatField(null=True, blank=True)),
+                ('life', models.FloatField(null=True, blank=True)),
+                ('orbit_radius', models.FloatField(null=True, blank=True)),
+                ('eccentricity', models.FloatField(null=True, blank=True)),
+                ('mass_dust', models.FloatField(null=True, blank=True)),
+                ('mass_gas', models.FloatField(null=True, blank=True)),
+                ('is_fragmented', models.BooleanField(default=False)),
+                ('density', models.FloatField(null=True, blank=True)),
+                ('surface_gravity', models.FloatField(null=True, blank=True)),
+                ('escape_velocity', models.FloatField(null=True, blank=True)),
+                ('orbit_period', models.FloatField(null=True, blank=True)),
+                ('rotation_rate', models.FloatField(null=True, blank=True)),
+                ('is_locked', models.BooleanField(default=False)),
+                ('pressure', models.FloatField(null=True, blank=True)),
+                ('radius', models.FloatField(null=True, blank=True)),
+                ('mass', models.FloatField(null=True, blank=True)),
+            ],
+            options={
+                'ordering': ['celestial'],
+                'verbose_name': 'Celestial Statistic',
+                'verbose_name_plural': 'Celestial Statistics',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='MapJump',
+            fields=[
+                ('origin_gate', models.ForeignKey(related_name='stargate_jump_origin_set', primary_key=True, serialize=False, to='eve_db.MapDenormalize', unique=True)),
+            ],
+            options={
+                'ordering': ['origin_gate'],
+                'verbose_name': 'Stargate Jump',
+                'verbose_name_plural': 'Stargate Jumps',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='MapLocationWormholeClass',
+            fields=[
+                ('location', models.ForeignKey(primary_key=True, serialize=False, to='eve_db.MapDenormalize', unique=True)),
+                ('wormhole_class', models.IntegerField(null=True, blank=True)),
+            ],
+            options={
+                'ordering': ['location'],
+                'verbose_name': 'Wormhole Class',
+                'verbose_name_plural': 'Wormhole Classes',
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.AddField(
+            model_name='stastation',
+            name='type',
+            field=models.ForeignKey(blank=True, to='eve_db.StaStationType', null=True),
+        ),
+        migrations.AddField(
+            model_name='staoperationservices',
+            name='service',
+            field=models.ForeignKey(to='eve_db.StaService'),
+        ),
+        migrations.AddField(
+            model_name='staoperation',
+            name='amarr_station_type',
+            field=models.ForeignKey(related_name='amarr_station_operation_set', blank=True, to='eve_db.StaStationType', null=True),
+        ),
+        migrations.AddField(
+            model_name='staoperation',
+            name='caldari_station_type',
+            field=models.ForeignKey(related_name='caldari_station_operation_set', blank=True, to='eve_db.StaStationType', null=True),
+        ),
+        migrations.AddField(
+            model_name='staoperation',
+            name='gallente_station_type',
+            field=models.ForeignKey(related_name='gallente_station_operation_set', blank=True, to='eve_db.StaStationType', null=True),
+        ),
+        migrations.AddField(
+            model_name='staoperation',
+            name='jove_station_type',
+            field=models.ForeignKey(related_name='jove_station_operation_set', blank=True, to='eve_db.StaStationType', null=True),
+        ),
+        migrations.AddField(
+            model_name='staoperation',
+            name='minmatar_station_type',
+            field=models.ForeignKey(related_name='minmatar_station_operation_set', blank=True, to='eve_db.StaStationType', null=True),
+        ),
+        migrations.AddField(
+            model_name='raminstallationtypecontent',
+            name='installation_type',
+            field=models.ForeignKey(to='eve_db.InvType'),
+        ),
+        migrations.AddField(
+            model_name='ramassemblylinestations',
+            name='assembly_line_type',
+            field=models.ForeignKey(to='eve_db.RamAssemblyLineType'),
+        ),
+        migrations.AddField(
+            model_name='ramassemblylinestations',
+            name='owner',
+            field=models.ForeignKey(blank=True, to='eve_db.CrpNPCCorporation', null=True),
+        ),
+        migrations.AddField(
+            model_name='ramassemblylinestations',
+            name='region',
+            field=models.ForeignKey(blank=True, to='eve_db.MapRegion', null=True),
+        ),
+        migrations.AddField(
+            model_name='ramassemblylinestations',
+            name='solar_system',
+            field=models.ForeignKey(blank=True, to='eve_db.MapSolarSystem', null=True),
+        ),
+        migrations.AddField(
+            model_name='ramassemblylinestations',
+            name='station',
+            field=models.ForeignKey(to='eve_db.StaStation'),
+        ),
+        migrations.AddField(
+            model_name='ramassemblylinestations',
+            name='station_type',
+            field=models.ForeignKey(blank=True, to='eve_db.StaStationType', null=True),
+        ),
+        migrations.AddField(
+            model_name='planetschematicstypemap',
+            name='type',
+            field=models.ForeignKey(to='eve_db.InvType'),
+        ),
+        migrations.AddField(
+            model_name='planetschematicspinmap',
+            name='type',
+            field=models.ForeignKey(to='eve_db.InvType'),
+        ),
+        migrations.AddField(
+            model_name='planetschematic',
+            name='pin_map',
+            field=models.ManyToManyField(related_name='usable_schematics', through='eve_db.PlanetSchematicsPinMap', to='eve_db.InvType'),
+        ),
+        migrations.AddField(
+            model_name='planetschematic',
+            name='type_map',
+            field=models.ManyToManyField(related_name='used_with_schematic', through='eve_db.PlanetSchematicsTypeMap', to='eve_db.InvType'),
+        ),
+        migrations.AddField(
+            model_name='mapsolarsystem',
+            name='sun_type',
+            field=models.ForeignKey(blank=True, to='eve_db.InvType', null=True),
+        ),
+        migrations.AddField(
+            model_name='maplandmark',
+            name='solar_system',
+            field=models.ForeignKey(blank=True, to='eve_db.MapSolarSystem', null=True),
+        ),
+        migrations.AddField(
+            model_name='mapdenormalize',
+            name='constellation',
+            field=models.ForeignKey(blank=True, to='eve_db.MapConstellation', null=True),
+        ),
+        migrations.AddField(
+            model_name='mapdenormalize',
+            name='group',
+            field=models.ForeignKey(blank=True, to='eve_db.InvGroup', null=True),
+        ),
+        migrations.AddField(
+            model_name='mapdenormalize',
+            name='region',
+            field=models.ForeignKey(blank=True, to='eve_db.MapRegion', null=True),
+        ),
+        migrations.AddField(
+            model_name='mapdenormalize',
+            name='solar_system',
+            field=models.ForeignKey(blank=True, to='eve_db.MapSolarSystem', null=True),
+        ),
+        migrations.AddField(
+            model_name='mapdenormalize',
+            name='type',
+            field=models.ForeignKey(blank=True, to='eve_db.InvType', null=True),
+        ),
+        migrations.AddField(
+            model_name='mapconstellationjump',
+            name='from_region',
+            field=models.ForeignKey(related_name='constellation_jumps_from_region_set', to='eve_db.MapRegion'),
+        ),
+        migrations.AddField(
+            model_name='mapconstellationjump',
+            name='to_constellation',
+            field=models.ForeignKey(related_name='constellation_jumps_to_constellation_set', to='eve_db.MapConstellation'),
+        ),
+        migrations.AddField(
+            model_name='mapconstellationjump',
+            name='to_region',
+            field=models.ForeignKey(related_name='constellation_jumps_to_region_set', to='eve_db.MapRegion'),
+        ),
+        migrations.AddField(
+            model_name='mapconstellation',
+            name='region',
+            field=models.ForeignKey(blank=True, to='eve_db.MapRegion', null=True),
+        ),
+        migrations.AddField(
+            model_name='invtypereaction',
+            name='reaction_type',
+            field=models.ForeignKey(related_name='inventorytypereactions_reaction_type_set', to='eve_db.InvType'),
+        ),
+        migrations.AddField(
+            model_name='invtypereaction',
+            name='type',
+            field=models.ForeignKey(related_name='inventorytypereactions_type_set', to='eve_db.InvType', help_text=b'Reaction result or material.'),
+        ),
+        migrations.AddField(
+            model_name='invtypematerial',
+            name='material_type',
+            field=models.ForeignKey(related_name='itemtype_set', to='eve_db.InvType'),
+        ),
+        migrations.AddField(
+            model_name='invtypematerial',
+            name='type',
+            field=models.ForeignKey(related_name='material_set', to='eve_db.InvType'),
+        ),
+        migrations.AddField(
+            model_name='invtype',
+            name='group',
+            field=models.ForeignKey(blank=True, to='eve_db.InvGroup', null=True),
+        ),
+        migrations.AddField(
+            model_name='invtype',
+            name='market_group',
+            field=models.ForeignKey(blank=True, to='eve_db.InvMarketGroup', null=True),
+        ),
+        migrations.AddField(
+            model_name='invtype',
+            name='race',
+            field=models.ForeignKey(blank=True, to='eve_db.ChrRace', null=True),
+        ),
+        migrations.AddField(
+            model_name='invposresource',
+            name='control_tower_type',
+            field=models.ForeignKey(related_name='tower_resource_set', to='eve_db.InvType'),
+        ),
+        migrations.AddField(
+            model_name='invposresource',
+            name='faction',
+            field=models.ForeignKey(blank=True, to='eve_db.ChrFaction', null=True),
+        ),
+        migrations.AddField(
+            model_name='invposresource',
+            name='purpose',
+            field=models.ForeignKey(blank=True, to='eve_db.InvPOSResourcePurpose', null=True),
+        ),
+        migrations.AddField(
+            model_name='invposresource',
+            name='resource_type',
+            field=models.ForeignKey(related_name='pos_resource_set', to='eve_db.InvType'),
+        ),
+        migrations.AddField(
+            model_name='invitem',
+            name='type',
+            field=models.ForeignKey(to='eve_db.InvType'),
+        ),
+        migrations.AddField(
+            model_name='invcontrabandtype',
+            name='type',
+            field=models.ForeignKey(to='eve_db.InvType'),
+        ),
+        migrations.AddField(
+            model_name='dgmtypeeffect',
+            name='type',
+            field=models.ForeignKey(to='eve_db.InvType'),
+        ),
+        migrations.AddField(
+            model_name='dgmtypeattribute',
+            name='inventory_type',
+            field=models.ForeignKey(to='eve_db.InvType'),
+        ),
+        migrations.AddField(
+            model_name='dgmattributetype',
+            name='unit',
+            field=models.ForeignKey(blank=True, to='eve_db.EveUnit', null=True),
+        ),
+        migrations.AddField(
+            model_name='crpnpccorporationtrade',
+            name='type',
+            field=models.ForeignKey(blank=True, to='eve_db.InvType', null=True),
+        ),
+        migrations.AddField(
+            model_name='crpnpccorporationresearchfield',
+            name='skill',
+            field=models.ForeignKey(blank=True, to='eve_db.InvType', null=True),
+        ),
+        migrations.AddField(
+            model_name='crpnpccorporationdivision',
+            name='division',
+            field=models.ForeignKey(to='eve_db.CrpNPCDivision'),
+        ),
+        migrations.AddField(
+            model_name='crpnpccorporation',
+            name='solar_system',
+            field=models.ForeignKey(blank=True, to='eve_db.MapSolarSystem', null=True),
+        ),
+        migrations.AddField(
+            model_name='chrfaction',
+            name='corporation',
+            field=models.ForeignKey(related_name='faction_set', blank=True, to='eve_db.CrpNPCCorporation', null=True),
+        ),
+        migrations.AddField(
+            model_name='chrfaction',
+            name='solar_system',
+            field=models.ForeignKey(related_name='faction_set', blank=True, to='eve_db.MapSolarSystem', null=True),
+        ),
+        migrations.AddField(
+            model_name='chrbloodline',
+            name='corporation',
+            field=models.ForeignKey(blank=True, to='eve_db.CrpNPCCorporation', null=True),
+        ),
+        migrations.AddField(
+            model_name='chrbloodline',
+            name='race',
+            field=models.ForeignKey(related_name='bloodline_set', blank=True, to='eve_db.ChrRace', null=True),
+        ),
+        migrations.AddField(
+            model_name='chrbloodline',
+            name='starter_ship_type',
+            field=models.ForeignKey(related_name='bloodline_starter_ship_set', blank=True, to='eve_db.InvType', null=True),
+        ),
+        migrations.AddField(
+            model_name='chrancestry',
+            name='bloodline',
+            field=models.ForeignKey(blank=True, to='eve_db.ChrBloodline', null=True),
+        ),
+        migrations.AddField(
+            model_name='agtresearchagent',
+            name='type',
+            field=models.ForeignKey(to='eve_db.InvType'),
+        ),
+        migrations.AddField(
+            model_name='agtagent',
+            name='corporation',
+            field=models.ForeignKey(blank=True, to='eve_db.CrpNPCCorporation', null=True),
+        ),
+        migrations.AddField(
+            model_name='agtagent',
+            name='division',
+            field=models.ForeignKey(blank=True, to='eve_db.CrpNPCDivision', null=True),
+        ),
+        migrations.AddField(
+            model_name='agtagent',
+            name='location',
+            field=models.ForeignKey(blank=True, to='eve_db.MapDenormalize', null=True),
+        ),
+        migrations.AddField(
+            model_name='agtagent',
+            name='type',
+            field=models.ForeignKey(blank=True, to='eve_db.AgtAgentType', null=True),
+        ),
+        migrations.AlterUniqueTogether(
+            name='staoperationservices',
+            unique_together=set([('operation', 'service')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='raminstallationtypecontent',
+            unique_together=set([('installation_type', 'assembly_line_type')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='ramassemblylinetypedetailpergroup',
+            unique_together=set([('assembly_line_type', 'group')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='ramassemblylinetypedetailpercategory',
+            unique_together=set([('assembly_line_type', 'category')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='ramassemblylinestations',
+            unique_together=set([('station', 'assembly_line_type')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='planetschematicstypemap',
+            unique_together=set([('schematic', 'type')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='planetschematicspinmap',
+            unique_together=set([('schematic', 'type')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='mapsolarsystemjump',
+            unique_together=set([('from_solar_system', 'to_solar_system')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='mapregionjump',
+            unique_together=set([('from_region', 'to_region')]),
+        ),
+        migrations.AddField(
+            model_name='mapjump',
+            name='destination_gate',
+            field=models.ForeignKey(related_name='stargate_jump_destination_set', to='eve_db.MapDenormalize'),
+        ),
+        migrations.AlterUniqueTogether(
+            name='mapconstellationjump',
+            unique_together=set([('from_constellation', 'to_constellation')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='invtypereaction',
+            unique_together=set([('reaction_type', 'input', 'type')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='invtypematerial',
+            unique_together=set([('type', 'material_type')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='invposresource',
+            unique_together=set([('control_tower_type', 'resource_type')]),
+        ),
+        migrations.AddField(
+            model_name='invmetatype',
+            name='parent_type',
+            field=models.ForeignKey(related_name='inventorymetatype_parent_type_set', to='eve_db.InvType'),
+        ),
+        migrations.AlterUniqueTogether(
+            name='invcontrabandtype',
+            unique_together=set([('faction', 'type')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='dgmtypeeffect',
+            unique_together=set([('type', 'effect')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='dgmtypeattribute',
+            unique_together=set([('inventory_type', 'attribute')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='crpnpccorporationtrade',
+            unique_together=set([('corporation', 'type')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='crpnpccorporationresearchfield',
+            unique_together=set([('skill', 'corporation')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='crpnpccorporationdivision',
+            unique_together=set([('corporation', 'division')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='agtresearchagent',
+            unique_together=set([('agent', 'type')]),
+        ),
+    ]

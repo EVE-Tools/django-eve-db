@@ -45,8 +45,8 @@ class Importer_chrFactions(SQLImporter):
         if row['corporationID']:
             corporation = CrpNPCCorporation.objects.get_or_create(id=row['corporationID'])[0]
         # Make sure to commit this or we'll get a transaction management error
-        if solar_system or corporation:
-            transaction.commit()
+        #if solar_system or corporation:
+        #    transaction.commit()
 
         new_instance = self.model(id=row['factionID'],
                                   name=row['factionName'],

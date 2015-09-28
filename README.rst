@@ -5,8 +5,8 @@ django-eve-db
 :Author: Greg Taylor
 :License: BSD
 
-django-eve-db is a set of `Django`_ models that wrap CCP's EVE Online data 
-dump. This makes it extremely easy to query the dump and rapidly 
+django-eve-db is a set of `Django`_ 1.7+ models that wrap CCP's EVE Online data
+dump. This makes it extremely easy to query the dump and rapidly
 develop software around it. Little to no SQL is required for many usage cases.
 
 Source: https://github.com/gtaylor/django-eve-db
@@ -17,7 +17,7 @@ Source: https://github.com/gtaylor/django-eve-db
 Getting Started
 ---------------
 
-For details on how to get started using this software, see the 
+For details on how to get started using this software, see the
 `Getting Started`_ page.
 
 .. _Getting Started: https://github.com/gtaylor/django-eve-db/wiki/Getting-started

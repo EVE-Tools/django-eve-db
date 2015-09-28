@@ -16,7 +16,6 @@ class Importer_invCategories(SQLImporter):
     pks = (('id', 'categoryID'),)
     field_map = (('name', 'categoryName'),
                  ('icon_id', 'iconID'),
-                 ('description', 'description'),
                  ('is_published', 'published', parse_int_bool))
 
 
@@ -26,11 +25,8 @@ class Importer_invGroups(SQLImporter):
     pks = (('id', 'groupID'),)
     field_map = (('name', 'groupName'),
                  ('category_id', 'categoryID'),
-                 ('description', 'description'),
                  ('icon_id', 'iconID'),
                  ('use_base_price', 'useBasePrice', parse_int_bool),
-                 ('allow_manufacture', 'allowManufacture', parse_int_bool),
-                 ('allow_recycle', 'allowRecycler', parse_int_bool),
                  ('allow_anchoring', 'anchorable', parse_int_bool),
                  ('is_anchored', 'anchored', parse_int_bool),
                  ('is_fittable_non_singleton', 'fittableNonSingleton', parse_int_bool),
@@ -63,7 +59,6 @@ class Importer_invTypes(SQLImporter):
     pks = (('id', 'typeID'),)
     field_map = (('name', 'typeName'),
                  ('description', 'description', parse_char_notnull),
-                 ('group_id', 'groupID'),
                  ('mass', 'mass'),
                  ('volume', 'volume'),
                  ('capacity', 'capacity'),
@@ -71,8 +66,7 @@ class Importer_invTypes(SQLImporter):
                  ('base_price', 'basePrice'),
                  ('market_group_id', 'marketGroupID'),
                  ('is_published', 'published', parse_int_bool),
-                 ('race_id', 'raceID'),
-                 ('chance_of_duplicating', 'chanceOfDuplicating'))
+                 ('race_id', 'raceID'))
 
 
 class Importer_invTypeMaterials(SQLImporter):

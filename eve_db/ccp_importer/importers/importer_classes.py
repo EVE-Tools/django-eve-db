@@ -2,9 +2,7 @@
 This module holds all importer related classes.
 """
 from progressbar import ProgressBar, Percentage, Bar, ETA
-from django import db
-from django.db import transaction
-from django.conf import settings
+from django.db import IntegrityError, transaction
 from eve_db.ccp_importer.bulkops import insert_many, update_many
 
 class SQLImporter(object):
@@ -31,7 +29,7 @@ class SQLImporter(object):
         self.progress_update_interval = 0
         self.pbar = None
 
-    @transaction.commit_manually
+    @transaction.atomic
     def prep_and_run_importer(self, conn):
         """
         Prepares the SQLite objects, progress bars, and other things and
@@ -42,8 +40,6 @@ class SQLImporter(object):
         self._setup_progressbar()
         self.insert_only = self.model.objects.all().count() == 0
 
-        transaction.commit()
-
         inserts_bucket = []
         updates_bucket = []
         inserts_counter = 0
@@ -53,39 +49,37 @@ class SQLImporter(object):
         query_string = 'SELECT * FROM %s' % self.table_name
 
         try:
-            for new_obj, insert in (self.import_row(row) for row in self.cursor.execute(query_string)):
-                # Now we have either a new model instance, an existing model
-                # instance with updated fields or None == skip
-                if new_obj:
-                    if insert:
-                        inserts_bucket.append(new_obj)
-                        inserts_counter += 1
-                        if inserts_counter % batch_size == 0:
-                            insert_many(inserts_bucket)
-                            inserts_bucket = []
-                    else:
-                        updates_bucket.append(new_obj)
-                        updates_counter += 1
-                        if updates_counter % batch_size == 0:
-                            update_many(updates_bucket)
-                            updates_bucket = []
+            with transaction.atomic():
+                for new_obj, insert in (self.import_row(row) for row in self.cursor.execute(query_string)):
+                    # Now we have either a new model instance, an existing model
+                    # instance with updated fields or None == skip
+                    if new_obj:
+                        if insert:
+                            inserts_bucket.append(new_obj)
+                            inserts_counter += 1
+                            if inserts_counter % batch_size == 0:
+                                insert_many(inserts_bucket)
+                                inserts_bucket = []
+                        else:
+                            updates_bucket.append(new_obj)
+                            updates_counter += 1
+                            if updates_counter % batch_size == 0:
+                                update_many(updates_bucket)
+                                updates_bucket = []
 
-                if self.itercount % self.progress_update_interval == 0:
-                    self._progress_handler()
+                    if self.itercount % self.progress_update_interval == 0:
+                        self._progress_handler()
 
-                self.itercount += 1
+                    self.itercount += 1
 
-    #                if settings.DEBUG:
-    #                    db.reset_queries()
-            if len(inserts_bucket) > 0:
-                insert_many(inserts_bucket)
-            if len(updates_bucket) > 0:
-                update_many(updates_bucket)
-        except Exception:
-            transaction.rollback()
+        #                if settings.DEBUG:
+        #                    db.reset_queries()
+                if len(inserts_bucket) > 0:
+                    insert_many(inserts_bucket)
+                if len(updates_bucket) > 0:
+                    update_many(updates_bucket)
+        except IntegrityError:
             raise
-        else:
-            transaction.commit()
         # Progressbar to 100%.
         self.pbar.finish()
         # Clean up the cursor, free the memory.
